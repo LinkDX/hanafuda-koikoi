@@ -35,8 +35,9 @@ export function withFlip(scope: HTMLElement, mutate: () => void): void {
       if (before.size > 0) el.classList.add('card--enter');
       continue;
     }
-    const dx = from.left - rect.left;
-    const dy = from.top - rect.top;
+    // 以中心點對齊計算位移（transform-origin 為中心，縮放時仍準確）
+    const dx = from.left + from.width / 2 - (rect.left + rect.width / 2);
+    const dy = from.top + from.height / 2 - (rect.top + rect.height / 2);
     if (Math.abs(dx) < 2 && Math.abs(dy) < 2) continue;
     const scale = from.width > 0 && rect.width > 0 ? from.width / rect.width : 1;
     el.style.zIndex = '30';

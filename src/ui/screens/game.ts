@@ -273,9 +273,12 @@ export class GameScreen {
     const oppZone = el('section', 'zone zone--opp');
     oppZone.appendChild(this.renderCaptured(v.captured[AI_PLAYER], 'opp'));
     const oppHand = el('div', 'hand hand--opp');
-    oppHand.dataset['flipAnchor'] = 'opp-hand';
-    for (let i = 0; i < v.hands[AI_PLAYER].length; i++) {
-      oppHand.appendChild(renderCard(0, style, { faceDown: true }));
+    const oppCount = v.hands[AI_PLAYER].length;
+    for (let i = 0; i < oppCount; i++) {
+      const back = renderCard(0, style, { faceDown: true });
+      // 錨定在中間那張牌背：AI 出牌動畫從這裡飛出
+      if (i === Math.floor(oppCount / 2)) back.dataset['flipAnchor'] = 'opp-hand';
+      oppHand.appendChild(back);
     }
     if (rs.oya === AI_PLAYER) oppZone.appendChild(el('span', 'oya-mark', S.oyaMark));
     if (rs.koikoiDeclared[AI_PLAYER] > 0) oppZone.appendChild(el('span', 'koikoi-mark', 'こいこい中'));
