@@ -1,0 +1,23 @@
+{
+  "name": "hanafuda-koikoi",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "日本花牌（花札）こいこい網頁遊戲 — 與三種等級 AI 對戰，支援 PWA 離線遊玩",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "simulate": "tsx scripts/simulate.ts"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "vite-plugin-pwa": "^1.3.0",
+    "vitest": "^4.1.11"
+  }
+}

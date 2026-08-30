@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dev-dist/
+*.local
+
+# 本機 npm registry workaround（CI 用官方預設，不需要這些）
+.npmrc
+.ca-bundle.pem
+
+# 編輯器
+.vscode/
+.idea/
