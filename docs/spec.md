@@ -150,7 +150,16 @@ interface StorageProvider {
 - storage：CRUD、schema 版本、統計正確性。
 - Soak：`npm run simulate` 萬場無例外，役頻率合理。
 
-## 8. 版本策略
+## 8. 未來規劃（Backlog）
+
+依使用者需求記錄，尚未排程：
+
+- **成就系統**：達成條件（首次五光、こいこい反殺、連勝、以每種役獲勝…）與徽章展示；資料經 `StorageProvider` 保存，沿用日後雲端同步路線。
+- **道具系統**：對局中可使用的道具（例如偷看牌堆頂、重抽手牌、役分加倍券等，規則設計待定）；需要考慮與計分公平性、AI 是否也能使用。
+- Firebase 跨裝置同步（`StorageProvider` 既有規劃）。
+- Monte Carlo 第四級 AI（`AIStrategy` 介面既有規劃）。
+
+## 9. 版本策略
 
 - semver：0.1.0 scaffold → 每里程碑升 minor → 1.0.0 功能完整上線；release 打 tag `vX.Y.Z` 並更新 CHANGELOG。
 - 重大規則變更或存檔 schema 不相容 → major；新功能 → minor；修錯 → patch。
