@@ -72,7 +72,7 @@ export class GameScreen {
   private selected: CardId | null = null;
   private dialog: DialogHandle | null = null;
   private aiTimer: ReturnType<typeof setTimeout> | null = null;
-  private yakuPanelOpen = window.matchMedia('(min-width: 768px)').matches;
+  private yakuPanelOpen = window.matchMedia('(min-width: 1024px)').matches;
   private readonly roundLog: MatchRecordRound[] = [];
   private recorded = false;
   private visual!: VisualState;
@@ -87,6 +87,9 @@ export class GameScreen {
     container.replaceChildren(this.root);
     this.state = advance(createMatch(config.rules, seed), { type: 'startMatch' }).state;
     this.visual = visualFromState(this.state);
+    if (import.meta.env.DEV) {
+      (window as unknown as { __game: GameScreen }).__game = this; // dev 除錯用
+    }
     this.render();
     this.pump();
   }
@@ -261,7 +264,17 @@ export class GameScreen {
     const status = el('header', 'status');
     status.appendChild(el('span', 'status__round', S.round(s.round, s.rules.totalRounds)));
     const scores = el('span', 'status__scores');
-    scores.textContent = `${S.you} ${s.scores[HUMAN]} : ${s.scores[AI_PLAYER]} ${S.ai}（${S.aiLevels[this.config.aiLevel]}）`;
+    const sideChips = (player: Player): HTMLElement[] => {
+      const chips: HTMLElement[] = [];
+      if (rs.oya === player) chips.push(el('span', 'chip chip--oya', S.oyaMark));
+      if (rs.koikoiDeclared[player] > 0) chips.push(el('span', 'chip chip--koikoi', 'こい'));
+      return chips;
+    };
+    scores.appendChild(el('span', undefined, S.you));
+    for (const c of sideChips(HUMAN)) scores.appendChild(c);
+    scores.appendChild(el('span', 'status__score', ` ${s.scores[HUMAN]} : ${s.scores[AI_PLAYER]} `));
+    scores.appendChild(el('span', undefined, `${S.ai}（${S.aiLevels[this.config.aiLevel]}）`));
+    for (const c of sideChips(AI_PLAYER)) scores.appendChild(c);
     status.appendChild(scores);
     const statusRight = el('span', 'status__right');
     statusRight.appendChild(el('span', 'status__deck', S.deckCount(v.deckCount)));
@@ -280,8 +293,6 @@ export class GameScreen {
       if (i === Math.floor(oppCount / 2)) back.dataset['flipAnchor'] = 'opp-hand';
       oppHand.appendChild(back);
     }
-    if (rs.oya === AI_PLAYER) oppZone.appendChild(el('span', 'oya-mark', S.oyaMark));
-    if (rs.koikoiDeclared[AI_PLAYER] > 0) oppZone.appendChild(el('span', 'koikoi-mark', 'こいこい中'));
     oppZone.appendChild(oppHand);
     this.root.appendChild(oppZone);
 
@@ -300,6 +311,7 @@ export class GameScreen {
       table.appendChild(spot);
     }
     const fieldEl = el('div', 'field');
+    if (v.field.length > 10) fieldEl.classList.add('field--dense');
     const awaitingChoice = !this.animating &&
       (s.phase === 'awaitHandMatchChoice' || s.phase === 'awaitDeckMatchChoice') && rs.turn === HUMAN;
     const choiceOptions = awaitingChoice && rs.pendingCard !== undefined
@@ -350,10 +362,11 @@ export class GameScreen {
       myHand.appendChild(cardEl);
     }
     myZone.appendChild(myHand);
-    if (rs.oya === HUMAN) myZone.appendChild(el('span', 'oya-mark', S.oyaMark));
-    if (rs.koikoiDeclared[HUMAN] > 0) myZone.appendChild(el('span', 'koikoi-mark', 'こいこい中'));
     myZone.appendChild(this.renderCaptured(v.captured[HUMAN], 'mine'));
-    myZone.appendChild(renderYakuPanel(
+    this.root.appendChild(myZone);
+
+    // 役型面板：手機為底部摺疊區，桌面（≥1024px）為右側欄
+    this.root.appendChild(renderYakuPanel(
       v.captured[HUMAN],
       s.rules,
       this.selected,
@@ -361,7 +374,6 @@ export class GameScreen {
       this.yakuPanelOpen,
       (open) => { this.yakuPanelOpen = open; },
     ));
-    this.root.appendChild(myZone);
 
     // 回合指示
     const hint = el('div', 'turn-hint');
@@ -380,7 +392,7 @@ export class GameScreen {
       if (cards.length === 0) continue;
       const group = el('div', 'captured__group');
       group.appendChild(el('span', 'captured__label', `${S.captured[type]} ${cards.length}`));
-      const row = el('div', 'captured__cards');
+      const row = el('div', `captured__cards${cards.length > 8 ? ' captured__cards--dense' : ''}`);
       for (const c of cards) row.appendChild(renderCard(c, this.config.style));
       group.appendChild(row);
       wrap.appendChild(group);

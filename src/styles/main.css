@@ -10,7 +10,8 @@
   --gold: #d9a441;
   --gold-soft: #c9a227;
   --lacquer: #241a15;
-  --card-w: clamp(46px, 10.5vw, 80px);
+  /* 牌寬同時受視窗寬與高約束，保證盤面整體塞得進視窗 */
+  --card-w: clamp(44px, min(10.5vw, (100vh - 240px) / 9.5), 80px);
   --card-h: calc(var(--card-w) * 1.6);
   color-scheme: dark;
 }

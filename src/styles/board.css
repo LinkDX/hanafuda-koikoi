@@ -9,9 +9,9 @@
   width: 100%;
 }
 
-/* 手機直向：加大牌面、撐滿整個視窗高度；手牌固定預留兩排 */
+/* 手機直向：加大牌面、撐滿視窗高度；手牌固定預留兩排；高度不足時牌自動縮小 */
 @media (max-width: 767px) {
-  :root { --card-w: clamp(52px, 15vw, 80px); }
+  :root { --card-w: clamp(36px, min(15vw, (100dvh - 272px) / 11), 80px); }
   .game { justify-content: space-between; gap: 6px; }
   .table { flex: 1; justify-content: flex-start; }
   .hand--mine { min-height: calc(var(--card-h) * 2 + 6px); }
@@ -84,6 +84,11 @@
   align-content: flex-start;
   min-height: calc(var(--card-h) * 2 + 8px);
   flex: 1;
+}
+/* 場札超過 10 張：固定 8 欄縮小排列，最多兩排、絕不撐高 */
+.field--dense .card {
+  width: calc((100% - 7 * 8px) / 8);
+  min-width: 30px;
 }
 
 /* 山札牌堆（翻牌動畫起點） */
@@ -170,30 +175,59 @@
   .spotlight, .banner { animation: none; }
 }
 
+/* 吃牌區：固定高度單列，過寬時內部橫向捲動（版面不變形） */
 .captured {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
-  min-height: calc(var(--card-w) * 0.55 * 1.6 + 18px);
-  align-content: flex-start;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: calc(var(--card-w) * 0.55 * 1.6 + 20px);
+  scrollbar-width: thin;
 }
-.captured__group { display: flex; flex-direction: column; gap: 2px; }
+.captured__group { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
 .captured__label { font-size: 11px; opacity: 0.75; letter-spacing: 1px; }
 .captured__cards { display: flex; }
 .captured .card { width: calc(var(--card-w) * 0.55); }
 .captured__cards .card:not(:first-child) { margin-left: calc(var(--card-w) * -0.28); }
+/* 同組超過 8 張時加大重疊，壓縮寬度 */
+.captured__cards--dense .card:not(:first-child) { margin-left: calc(var(--card-w) * -0.44); }
 
-.oya-mark, .koikoi-mark {
-  position: absolute;
-  top: 0;
-  font-size: 12px;
+/* 狀態列小徽章（親／こいこい），不再疊在牌上 */
+.chip {
+  display: inline-block;
+  font-size: 11px;
   font-weight: 700;
-  padding: 2px 9px;
-  border-radius: 10px;
-  z-index: 2;
+  padding: 1px 7px;
+  border-radius: 9px;
+  margin: 0 3px;
+  vertical-align: 1px;
 }
-.oya-mark { right: 0; background: linear-gradient(180deg, #e5b654, #c99427); color: #33250c; box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
-.koikoi-mark { left: 0; background: linear-gradient(180deg, #c94a3c, #a3271c); color: #fff; animation: pulse 1s infinite alternate; }
+.chip--oya { background: linear-gradient(180deg, #e5b654, #c99427); color: #33250c; }
+.chip--koikoi { background: linear-gradient(180deg, #c94a3c, #a3271c); color: #fff; animation: pulse 1s infinite alternate; }
+
+/* 細金色主題卷軸 */
+.yaku-panel, .captured, .dialog, .history__list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(217, 164, 65, 0.55) transparent;
+}
+.yaku-panel::-webkit-scrollbar, .captured::-webkit-scrollbar,
+.dialog::-webkit-scrollbar, .history__list::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.yaku-panel::-webkit-scrollbar-thumb, .captured::-webkit-scrollbar-thumb,
+.dialog::-webkit-scrollbar-thumb, .history__list::-webkit-scrollbar-thumb {
+  background: rgba(217, 164, 65, 0.45);
+  border-radius: 3px;
+}
+.yaku-panel::-webkit-scrollbar-thumb:hover, .captured::-webkit-scrollbar-thumb:hover {
+  background: rgba(217, 164, 65, 0.75);
+}
+.yaku-panel::-webkit-scrollbar-track, .captured::-webkit-scrollbar-track,
+.dialog::-webkit-scrollbar-track, .history__list::-webkit-scrollbar-track {
+  background: transparent;
+}
 
 .turn-hint {
   text-align: center;
@@ -402,11 +436,44 @@
 .rules__month-cards { display: flex; gap: 8px; flex-wrap: wrap; }
 .rules__month-cards .card { width: clamp(60px, 14vw, 90px); }
 
-/* 桌面版 */
+/* 平板以上：吃牌區移到手牌側邊 */
 @media (min-width: 768px) {
   .game { padding: 16px; gap: 12px; }
-  .zone--opp, .zone--mine { flex-direction: row; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+  .zone--opp, .zone--mine { flex-direction: row; align-items: flex-start; justify-content: space-between; flex-wrap: nowrap; }
   .zone .hand { flex: 1; }
   .captured { max-width: 42%; }
-  .yaku-panel { width: 100%; }
+}
+
+/* 平板（768–1023）：手牌與吃牌並排後寬度變窄，牌寬需同時受寬度上限約束 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root { --card-w: clamp(38px, min(5.5vw, (100vh - 260px) / 9), 80px); }
+}
+
+/* 桌面：雙欄格線，役型面板固定右欄、自帶捲動，不影響盤面高度 */
+@media (min-width: 1024px) {
+  .game {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    grid-template-areas:
+      'status status'
+      'opp    panel'
+      'table  panel'
+      'mine   panel'
+      'hint   panel';
+    grid-template-rows: min-content min-content 1fr min-content min-content;
+    align-items: start;
+    column-gap: 14px;
+  }
+  .status { grid-area: status; }
+  .zone--opp { grid-area: opp; }
+  .table { grid-area: table; }
+  .zone--mine { grid-area: mine; }
+  .turn-hint { grid-area: hint; }
+  .yaku-panel {
+    grid-area: panel;
+    align-self: stretch;
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+  }
+  .yaku-panel__list { grid-template-columns: 1fr; }
 }
