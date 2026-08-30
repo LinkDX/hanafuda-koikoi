@@ -9,13 +9,12 @@
   width: 100%;
 }
 
-/* 手機直向：加大牌面、撐滿整個視窗高度 */
+/* 手機直向：加大牌面、撐滿整個視窗高度；手牌固定預留兩排 */
 @media (max-width: 767px) {
   :root { --card-w: clamp(52px, 15vw, 80px); }
   .game { justify-content: space-between; gap: 6px; }
-  .table { flex: 1; justify-content: center; }
-  .hand--opp { min-height: auto; }
-  .hand { min-height: auto; }
+  .table { flex: 1; justify-content: flex-start; }
+  .hand--mine { min-height: calc(var(--card-h) * 2 + 6px); }
 }
 
 /* 漆器質感狀態列 */
@@ -43,60 +42,103 @@
   position: relative;
 }
 
+/* 各區固定預留高度，牌的增減不改變版面 */
 .hand {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
   justify-content: center;
-  min-height: calc(var(--card-w) * 1.6);
+  min-height: var(--card-h);
+  align-content: flex-start;
 }
 .hand--opp .card { width: calc(var(--card-w) * 0.62); }
-.hand--opp { min-height: calc(var(--card-w) * 1.1); }
+.hand--opp { min-height: calc(var(--card-w) * 0.62 * 1.6); }
 
-/* 場中央：內凹絨布面 */
+/* 場中央：內凹絨布面；上方永久保留展示槽高度 */
 .table {
+  position: relative;
   background:
     radial-gradient(ellipse at 50% 40%, rgba(255, 244, 214, 0.05), transparent 70%),
     var(--felt-deep);
   border: 1px solid rgba(217, 164, 65, 0.35);
   border-radius: 16px;
-  padding: 14px 12px;
+  padding: calc(var(--card-h) * 1.12 + 22px) 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: center;
   box-shadow: inset 0 4px 18px rgba(0, 0, 0, 0.45), inset 0 0 0 3px rgba(217, 164, 65, 0.07);
 }
+.table-main {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+}
 .field {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   justify-content: center;
-  min-height: calc(var(--card-w) * 1.7);
+  align-content: flex-start;
+  min-height: calc(var(--card-h) * 2 + 8px);
+  flex: 1;
 }
-.pending { display: flex; align-items: center; gap: 12px; }
-.pending__hint { font-size: 14px; color: var(--gold); font-weight: 700; }
 
-/* 打出／翻出的牌聚光展示 */
-.spotlight {
+/* 山札牌堆（翻牌動畫起點） */
+.deck-pile {
+  position: relative;
+  width: calc(var(--card-w) * 0.9);
+  height: calc(var(--card-w) * 0.9 * 1.6);
+  flex-shrink: 0;
+}
+.deck-pile .card {
+  position: absolute;
+  width: 100%;
+}
+.deck-pile .card:nth-child(1) { top: 6px; left: 6px; }
+.deck-pile .card:nth-child(2) { top: 3px; left: 3px; }
+.deck-pile .card:nth-child(3) { top: 0; left: 0; }
+.deck-pile__count {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  background: var(--lacquer);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 1px 7px;
+  z-index: 2;
+}
+
+/* 展示槽：絕對定位覆蓋於保留區，不影響版面 */
+.spotlight, .pending {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 10px;
-  animation: spotlight-in 0.25s ease-out;
+  z-index: 20;
+  pointer-events: none;
+  white-space: nowrap;
 }
-.spotlight .card { width: calc(var(--card-w) * 1.15); }
+.spotlight .card { width: calc(var(--card-w) * 1.05); }
 .spotlight .card svg { box-shadow: 0 0 0 3px var(--gold), 0 8px 20px rgba(0, 0, 0, 0.5); }
-.spotlight__label {
+.spotlight__label, .pending__hint {
   font-size: 14px;
   font-weight: 700;
   color: var(--gold);
   letter-spacing: 2px;
-  writing-mode: vertical-rl;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
-@keyframes spotlight-in {
-  from { transform: scale(0.7); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
+.spotlight__label { writing-mode: vertical-rl; }
+.pending .card { width: calc(var(--card-w) * 1.05); }
+.pending .card svg { box-shadow: 0 0 0 3px var(--accent-bright), 0 8px 20px rgba(0, 0, 0, 0.5); }
 
 /* 成役／こいこい橫幅 */
 .banner {
@@ -128,7 +170,13 @@
   .spotlight, .banner { animation: none; }
 }
 
-.captured { display: flex; gap: 10px; flex-wrap: wrap; min-height: 20px; }
+.captured {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-height: calc(var(--card-w) * 0.55 * 1.6 + 18px);
+  align-content: flex-start;
+}
 .captured__group { display: flex; flex-direction: column; gap: 2px; }
 .captured__label { font-size: 11px; opacity: 0.75; letter-spacing: 1px; }
 .captured__cards { display: flex; }

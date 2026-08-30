@@ -11,6 +11,7 @@
   --gold-soft: #c9a227;
   --lacquer: #241a15;
   --card-w: clamp(46px, 10.5vw, 80px);
+  --card-h: calc(var(--card-w) * 1.6);
   color-scheme: dark;
 }
 

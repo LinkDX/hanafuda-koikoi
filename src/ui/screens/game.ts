@@ -273,6 +273,7 @@ export class GameScreen {
     const oppZone = el('section', 'zone zone--opp');
     oppZone.appendChild(this.renderCaptured(v.captured[AI_PLAYER], 'opp'));
     const oppHand = el('div', 'hand hand--opp');
+    oppHand.dataset['flipAnchor'] = 'opp-hand';
     for (let i = 0; i < v.hands[AI_PLAYER].length; i++) {
       oppHand.appendChild(renderCard(0, style, { faceDown: true }));
     }
@@ -281,7 +282,7 @@ export class GameScreen {
     oppZone.appendChild(oppHand);
     this.root.appendChild(oppZone);
 
-    // 場中央
+    // 場中央（展示槽為絕對定位、場札區固定高度 → 版面不跳動）
     const table = el('section', 'table');
     if (v.spotlight) {
       const spot = el('div', 'spotlight');
@@ -289,7 +290,10 @@ export class GameScreen {
         ? '翻牌堆'
         : v.spotlight.player === HUMAN ? `${S.you}打出` : 'AI 打出';
       spot.appendChild(el('div', 'spotlight__label', who));
-      spot.appendChild(renderCard(v.spotlight.card, style));
+      const spotCard = renderCard(v.spotlight.card, style);
+      if (v.spotlight.source === 'deck') spotCard.dataset['flipFrom'] = 'deck';
+      else if (v.spotlight.player === AI_PLAYER) spotCard.dataset['flipFrom'] = 'opp-hand';
+      spot.appendChild(spotCard);
       table.appendChild(spot);
     }
     const fieldEl = el('div', 'field');
@@ -314,7 +318,19 @@ export class GameScreen {
       pendingWrap.appendChild(renderCard(rs.pendingCard, style));
       table.appendChild(pendingWrap);
     }
-    table.appendChild(fieldEl);
+    // 山札牌堆（翻牌動畫的起點錨）
+    const deckPile = el('div', 'deck-pile');
+    deckPile.dataset['flipAnchor'] = 'deck';
+    if (v.deckCount > 0) {
+      for (let i = 0; i < Math.min(3, v.deckCount); i++) {
+        deckPile.appendChild(renderCard(0, style, { faceDown: true }));
+      }
+      deckPile.appendChild(el('span', 'deck-pile__count', String(v.deckCount)));
+    }
+    const main = el('div', 'table-main');
+    main.appendChild(deckPile);
+    main.appendChild(fieldEl);
+    table.appendChild(main);
     this.root.appendChild(table);
 
     // 我方區

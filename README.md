@@ -2,7 +2,7 @@
 
 日本花牌（花札）こいこい玩法的網頁遊戲。與三種等級的 AI 對戰，內建規則教學與出牌提示，支援 RWD 與 PWA，可安裝到手機離線遊玩。
 
-> 🎴 線上遊玩：<https://USERNAME.github.io/hanafuda-koikoi/>（上線後更新）
+> 🎴 線上遊玩：<https://linkdx.github.io/hanafuda-koikoi/>
 
 ## 特色
 
