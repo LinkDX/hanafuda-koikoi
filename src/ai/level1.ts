@@ -9,8 +9,8 @@ import type { AIStrategy } from './types';
 export function createLevel1(rng: Rng): AIStrategy {
   return {
     async chooseHandCard(view: PlayerView): Promise<CardId> {
-      // 15% 隨機出牌，讓行為可被擊敗
-      if (rng() < 0.15) return view.hand[Math.floor(rng() * view.hand.length)]!;
+      // 35% 隨機出牌：初級要讓新手也打得贏
+      if (rng() < 0.35) return view.hand[Math.floor(rng() * view.hand.length)]!;
 
       let best: CardId | null = null;
       let bestValue = -1;
@@ -25,11 +25,13 @@ export function createLevel1(rng: Rng): AIStrategy {
       }
       if (best !== null) return best;
 
-      // 無配對：丟牌面價值最低的
-      return [...view.hand].sort((a, b) => rawValue(a) - rawValue(b))[0]!;
+      // 無配對：隨便丟一張（不懂守牌）
+      return view.hand[Math.floor(rng() * view.hand.length)]!;
     },
 
     async chooseFieldMatch(_view, _played, options): Promise<CardId> {
+      // 30% 亂選
+      if (rng() < 0.3) return options[Math.floor(rng() * options.length)]!;
       return [...options].sort((a, b) => rawValue(b) - rawValue(a))[0]!;
     },
 
