@@ -1,5 +1,6 @@
 import { modernStyle } from '../art/modern';
 import { ensureSprite } from '../art/sprites';
+import { traditionalStyle } from '../art/traditional';
 import { DEFAULT_RULES } from '../core/rules';
 import { LocalStorageProvider } from '../storage/localStorage';
 import type { StoredSettings } from '../storage/provider';
@@ -7,6 +8,7 @@ import { GameScreen } from './screens/game';
 import { renderHistory } from './screens/history';
 import { renderMenu } from './screens/menu';
 import type { MenuResult } from './screens/menu';
+import { renderRules } from './screens/rules';
 
 function toStored(settings: MenuResult): StoredSettings {
   return {
@@ -33,13 +35,14 @@ function fromStored(stored: StoredSettings): MenuResult {
 
 export function initApp(container: HTMLElement): void {
   ensureSprite(modernStyle);
+  ensureSprite(traditionalStyle);
   const storage = new LocalStorageProvider();
 
   let game: GameScreen | null = null;
   let settings: MenuResult = {
     rules: DEFAULT_RULES,
     aiLevel: 2,
-    style: 'modern',
+    style: 'traditional',
   };
 
   const showMenu = (): void => {
@@ -49,7 +52,13 @@ export function initApp(container: HTMLElement): void {
       settings = result;
       void storage.saveSettings(toStored(result));
       startGame();
-    }, showHistory);
+    }, showHistory, showRules);
+  };
+
+  const showRules = (): void => {
+    game?.destroy();
+    game = null;
+    renderRules(container, settings.style, showMenu);
   };
 
   const showHistory = (): void => {

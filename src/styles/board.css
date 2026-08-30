@@ -68,6 +68,57 @@
 .pending { display: flex; align-items: center; gap: 12px; }
 .pending__hint { font-size: 14px; color: var(--gold); font-weight: 700; }
 
+/* 打出／翻出的牌聚光展示 */
+.spotlight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: spotlight-in 0.25s ease-out;
+}
+.spotlight .card { width: calc(var(--card-w) * 1.15); }
+.spotlight .card svg { box-shadow: 0 0 0 3px var(--gold), 0 8px 20px rgba(0, 0, 0, 0.5); }
+.spotlight__label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 2px;
+  writing-mode: vertical-rl;
+}
+@keyframes spotlight-in {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* 成役／こいこい橫幅 */
+.banner {
+  position: fixed;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, rgba(36, 26, 21, 0.95), rgba(20, 14, 11, 0.95));
+  border: 2px solid var(--gold);
+  border-radius: 14px;
+  color: var(--gold);
+  font-size: clamp(20px, 5vw, 30px);
+  font-weight: 700;
+  font-family: 'Noto Serif TC', serif;
+  letter-spacing: 4px;
+  padding: 16px 34px;
+  z-index: 60;
+  box-shadow: 0 12px 44px rgba(0, 0, 0, 0.6);
+  animation: banner-in 0.3s ease-out;
+  pointer-events: none;
+  white-space: nowrap;
+}
+@keyframes banner-in {
+  from { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
+  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight, .banner { animation: none; }
+}
+
 .captured { display: flex; gap: 10px; flex-wrap: wrap; min-height: 20px; }
 .captured__group { display: flex; flex-direction: column; gap: 2px; }
 .captured__label { font-size: 11px; opacity: 0.75; letter-spacing: 1px; }
@@ -221,6 +272,78 @@
 .history__empty { opacity: 0.7; font-size: 14px; text-align: center; padding: 12px 0; }
 .history__actions { display: flex; gap: 10px; margin-top: 8px; }
 .history__actions .btn { flex: 1; }
+
+/* ---------- 規則教學頁 ---------- */
+.rules {
+  margin: 24px auto;
+  padding: 28px 24px;
+  max-width: 720px;
+  width: calc(100% - 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(217, 164, 65, 0.4);
+  border-radius: 18px;
+}
+.rules__title {
+  font-size: 28px;
+  color: var(--gold);
+  text-align: center;
+  letter-spacing: 4px;
+  font-family: 'Noto Serif TC', serif;
+}
+.rules__subtitle {
+  font-size: 18px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-top: 12px;
+  border-bottom: 1px solid rgba(217, 164, 65, 0.35);
+  padding-bottom: 6px;
+  font-family: 'Noto Serif TC', serif;
+}
+.rules__flow { list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 8px; }
+.rules__step {
+  counter-increment: step;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(243, 230, 207, 0.06);
+  border-radius: 10px;
+  padding: 10px 14px 10px 44px;
+  position: relative;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.rules__step::before {
+  content: counter(step);
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #33250c;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rules__step-title { color: var(--gold); }
+.rules__step-desc { opacity: 0.9; }
+.rules__yaku { display: flex; flex-direction: column; gap: 4px; }
+.rules__yaku-row { padding: 8px 10px; background: rgba(243, 230, 207, 0.05); border-radius: 8px; }
+.rules__yaku-name { font-weight: 700; font-size: 15px; font-family: 'Noto Serif TC', serif; }
+.rules__yaku-pts { color: var(--gold); font-weight: 700; }
+.rules__yaku-desc { font-size: 13px; opacity: 0.75; margin: 2px 0 4px; }
+.rules__yaku-cards { display: flex; gap: 4px; flex-wrap: wrap; }
+.rules__yaku-cards .card { width: 46px; }
+.rules__month { margin-top: 4px; }
+.rules__month-title { font-size: 15px; margin-bottom: 6px; opacity: 0.9; font-family: 'Noto Serif TC', serif; }
+.rules__month-cards { display: flex; gap: 8px; flex-wrap: wrap; }
+.rules__month-cards .card { width: clamp(60px, 14vw, 90px); }
 
 /* 桌面版 */
 @media (min-width: 768px) {

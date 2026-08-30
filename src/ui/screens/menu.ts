@@ -17,6 +17,7 @@ export function renderMenu(
   defaults: MenuResult,
   onStart: (result: MenuResult) => void,
   onHistory?: () => void,
+  onRules?: () => void,
 ): void {
   const root = el('div', 'menu');
   root.appendChild(el('h1', 'menu__title', S.appTitle));
@@ -72,8 +73,8 @@ export function renderMenu(
     { value: 3, label: S.aiLevels[3]! },
   ] as const, aiLevel, (v) => { aiLevel = v as AILevel; }));
 
-  // 傳統風卡面完成後再開放切換
   root.appendChild(optionGroup(S.cardStyle, [
+    { value: 'traditional', label: S.styleTraditional },
     { value: 'modern', label: S.styleModern },
   ] as const, style, (v) => { style = v as CardStyleId; }));
 
@@ -102,9 +103,10 @@ export function renderMenu(
     });
   }));
 
-  if (onHistory) {
-    root.appendChild(button(S.history, 'btn', onHistory));
-  }
+  const links = el('div', 'menu__links');
+  if (onRules) links.appendChild(button(S.rules, 'btn', onRules));
+  if (onHistory) links.appendChild(button(S.history, 'btn', onHistory));
+  if (links.childElementCount > 0) root.appendChild(links);
 
   container.replaceChildren(root);
 }
