@@ -1,4 +1,7 @@
+import './styles/main.css';
+import './styles/cards.css';
+import './styles/board.css';
+import { initApp } from './ui/app';
+
 const app = document.querySelector<HTMLDivElement>('#app');
-if (app) {
-  app.textContent = '花牌 こいこい — 開發中';
-}
+if (app) initApp(app);

@@ -1,0 +1,98 @@
+.game {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  background: var(--felt-dark);
+  border-radius: 10px;
+  padding: 8px 14px;
+}
+.status__scores { font-weight: 700; }
+
+.zone {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.hand {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-height: calc(var(--card-w) * 1.6);
+}
+.hand--opp .card { width: calc(var(--card-w) * 0.66); }
+
+.table {
+  background: var(--felt-dark);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+.field {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  min-height: calc(var(--card-w) * 1.7);
+}
+.pending {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.pending__hint { font-size: 14px; color: var(--gold); font-weight: 700; }
+
+.captured {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-height: 20px;
+}
+.captured__group { display: flex; flex-direction: column; gap: 2px; }
+.captured__label { font-size: 11px; opacity: 0.7; }
+.captured__cards { display: flex; }
+.captured .card { width: calc(var(--card-w) * 0.55); }
+.captured__cards .card:not(:first-child) { margin-left: calc(var(--card-w) * -0.28); }
+
+.oya-mark, .koikoi-mark {
+  position: absolute;
+  top: 0;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.oya-mark { right: 0; background: var(--gold); color: #2c2410; }
+.koikoi-mark { left: 0; background: var(--accent); color: #fff; animation: pulse 1s infinite alternate; }
+
+.turn-hint {
+  text-align: center;
+  font-size: 14px;
+  min-height: 20px;
+  opacity: 0.85;
+}
+
+/* 桌面版：吃牌區移到兩側 */
+@media (min-width: 768px) {
+  .game { padding: 16px; gap: 12px; }
+  .zone--opp, .zone--mine { flex-direction: row; align-items: flex-start; justify-content: space-between; }
+  .zone .hand { flex: 1; }
+  .captured { max-width: 40%; }
+}

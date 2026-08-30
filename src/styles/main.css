@@ -1,0 +1,107 @@
+:root {
+  --felt: #1a3c2e;
+  --felt-dark: #142e23;
+  --paper: #f5efe0;
+  --ink: #2c2a24;
+  --accent: #b03a2e;
+  --gold: #c9a227;
+  --card-w: clamp(44px, 10.5vw, 78px);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--felt);
+  color: var(--paper);
+  font-family: 'Noto Sans TC', 'Microsoft JhengHei', system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn {
+  border: 1px solid rgba(245, 239, 224, 0.4);
+  background: rgba(245, 239, 224, 0.08);
+  color: var(--paper);
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 15px;
+  min-height: 44px;
+  transition: background 0.15s, transform 0.1s;
+}
+.btn:hover { background: rgba(245, 239, 224, 0.18); }
+.btn:active { transform: scale(0.97); }
+.btn--primary { background: var(--gold); border-color: var(--gold); color: #2c2410; font-weight: 700; }
+.btn--primary:hover { background: #d9b23a; }
+.btn--danger { background: var(--accent); border-color: var(--accent); font-weight: 700; }
+.btn--danger:hover { background: #c94a3c; }
+.btn--active { background: var(--gold); border-color: var(--gold); color: #2c2410; font-weight: 700; }
+
+/* ---------- 主選單 ---------- */
+.menu {
+  margin: auto;
+  padding: 32px 20px;
+  max-width: 480px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: center;
+}
+.menu__title { font-size: 40px; letter-spacing: 6px; color: var(--gold); }
+.menu__subtitle { opacity: 0.7; margin-top: -10px; }
+.menu__group { display: flex; flex-direction: column; gap: 8px; }
+.menu__label { font-size: 14px; opacity: 0.75; text-align: left; }
+.menu__options { display: flex; gap: 8px; flex-wrap: wrap; }
+.menu__options .btn { flex: 1; min-width: 72px; }
+.btn--start { font-size: 18px; padding: 14px; margin-top: 8px; }
+
+/* ---------- 對話框 ---------- */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+.dialog {
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  max-height: 85dvh;
+  overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+.dialog__title { font-size: 24px; margin-bottom: 12px; color: var(--accent); }
+.dialog__desc { margin: 10px 0; font-size: 15px; line-height: 1.6; }
+.dialog__actions { display: flex; gap: 10px; margin-top: 18px; }
+.dialog__actions .btn { flex: 1; color: var(--ink); border-color: rgba(44, 42, 36, 0.35); }
+.dialog__actions .btn--primary { color: #2c2410; border-color: var(--gold); }
+.dialog__actions .btn--danger { color: #fff; border-color: var(--accent); }
+.yaku-list { list-style: none; margin: 8px 0; }
+.yaku-list__item {
+  padding: 6px 10px;
+  border-bottom: 1px dashed rgba(44, 42, 36, 0.2);
+  font-size: 15px;
+}
+.yaku-list__item--mult { color: var(--accent); font-weight: 700; }
