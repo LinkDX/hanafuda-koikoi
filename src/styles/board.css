@@ -152,6 +152,76 @@
 .card-detail__type { font-size: 13px; opacity: 0.7; }
 .card-detail__related { font-size: 13px; margin-top: 8px; color: var(--accent); }
 
+/* ---------- 對戰紀錄 ---------- */
+.history {
+  margin: 24px auto;
+  padding: 28px 24px;
+  max-width: 560px;
+  width: calc(100% - 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(217, 164, 65, 0.4);
+  border-radius: 18px;
+}
+.history__title {
+  font-size: 28px;
+  color: var(--gold);
+  text-align: center;
+  letter-spacing: 4px;
+  font-family: 'Noto Serif TC', serif;
+}
+.history__subtitle { font-size: 15px; color: var(--gold); letter-spacing: 2px; margin-top: 4px; }
+.history__stats { display: flex; gap: 10px; }
+.stat-card {
+  flex: 1;
+  background: rgba(243, 230, 207, 0.08);
+  border: 1px solid rgba(243, 230, 207, 0.15);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+.stat-card__value { font-size: 26px; font-weight: 700; color: var(--gold); }
+.stat-card__label { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+.history__levels { display: flex; flex-direction: column; gap: 6px; }
+.level-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+  padding: 8px 12px;
+  background: rgba(243, 230, 207, 0.06);
+  border-radius: 8px;
+}
+.level-row__name { font-weight: 700; }
+.level-row__detail { opacity: 0.85; }
+.history__yaku { display: flex; flex-wrap: wrap; gap: 6px; }
+.yaku-chip {
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(217, 164, 65, 0.16);
+  border: 1px solid rgba(217, 164, 65, 0.4);
+}
+.history__list { display: flex; flex-direction: column; gap: 4px; max-height: 40dvh; overflow-y: auto; }
+.match-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(243, 230, 207, 0.05);
+}
+.match-row__outcome { font-weight: 700; width: 20px; text-align: center; }
+.match-row--win .match-row__outcome { color: #7fd48a; }
+.match-row--loss .match-row__outcome { color: #e07a6d; }
+.match-row--draw .match-row__outcome { color: var(--gold); }
+.history__empty { opacity: 0.7; font-size: 14px; text-align: center; padding: 12px 0; }
+.history__actions { display: flex; gap: 10px; margin-top: 8px; }
+.history__actions .btn { flex: 1; }
+
 /* 桌面版 */
 @media (min-width: 768px) {
   .game { padding: 16px; gap: 12px; }

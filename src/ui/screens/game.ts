@@ -10,6 +10,7 @@ import type { Action, GameState, Player } from '../../core/state';
 import { detectYaku } from '../../core/yaku';
 import { toPlayerView } from '../../core/view';
 import type { CardStyleId } from '../../art/styleTypes';
+import type { MatchRecord, MatchRecordRound, StorageProvider } from '../../storage/provider';
 import { withFlip } from '../animate';
 import { showCardDetail } from '../components/cardDetail';
 import { renderCard } from '../components/cardEl';
@@ -23,8 +24,10 @@ export interface GameConfig {
   rules: RuleConfig;
   aiLevel: AILevel;
   style: CardStyleId;
+  storage: StorageProvider;
   seed?: number;
   onExit(): void;
+  onPlayAgain(): void;
 }
 
 const HUMAN: Player = 0;
@@ -40,6 +43,8 @@ export class GameScreen {
   private dialog: DialogHandle | null = null;
   private aiTimer: ReturnType<typeof setTimeout> | null = null;
   private yakuPanelOpen = window.matchMedia('(min-width: 768px)').matches;
+  private readonly roundLog: MatchRecordRound[] = [];
+  private recorded = false;
 
   constructor(container: HTMLElement, config: GameConfig) {
     this.config = config;
@@ -295,6 +300,15 @@ export class GameScreen {
   private showRoundEnd(): void {
     const s = this.state;
     const result = s.roundResult;
+    // 記錄本局（同一局只記一次；render 可能重播 phase）
+    if (this.roundLog.length < s.round) {
+      this.roundLog.push({
+        winner: result?.winner ?? null,
+        points: result?.breakdown?.total ?? 0,
+        yaku: (result?.breakdown?.yaku ?? []).map((y) => ({ id: y.id, points: y.points })),
+        koikoi: [...s.roundState.koikoiDeclared],
+      });
+    }
     const content = el('div');
     if (!result || result.winner === null) {
       content.appendChild(el('h2', 'dialog__title', S.roundDraw));
@@ -325,6 +339,7 @@ export class GameScreen {
 
   private showMatchEnd(): void {
     const s = this.state;
+    this.recordMatch();
     const content = el('div');
     content.appendChild(el('h2', 'dialog__title', S.matchEnd));
     const [me, ai] = s.scores;
@@ -335,7 +350,30 @@ export class GameScreen {
       this.dialog?.close();
       this.config.onExit();
     }));
+    actions.appendChild(button(S.playAgain, 'btn btn--primary', () => {
+      this.dialog?.close();
+      this.config.onPlayAgain();
+    }));
     content.appendChild(actions);
     this.dialog = showDialog(content);
+  }
+
+  /** 場末寫入對戰紀錄（一場只記一次） */
+  private recordMatch(): void {
+    if (this.recorded) return;
+    this.recorded = true;
+    const s = this.state;
+    const [me, ai] = s.scores;
+    const record: MatchRecord = {
+      schemaVersion: 1,
+      id: `m-${Date.now()}-${Math.floor(Math.random() * 1e6)}`,
+      timestamp: Date.now(),
+      aiLevel: this.config.aiLevel,
+      totalRounds: s.rules.totalRounds,
+      finalScores: [me, ai],
+      winner: me === ai ? null : me > ai ? HUMAN : AI_PLAYER,
+      rounds: [...this.roundLog],
+    };
+    void this.config.storage.addMatch(record);
   }
 }

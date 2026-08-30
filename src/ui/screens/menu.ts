@@ -16,6 +16,7 @@ export function renderMenu(
   container: HTMLElement,
   defaults: MenuResult,
   onStart: (result: MenuResult) => void,
+  onHistory?: () => void,
 ): void {
   const root = el('div', 'menu');
   root.appendChild(el('h1', 'menu__title', S.appTitle));
@@ -100,6 +101,10 @@ export function renderMenu(
       style,
     });
   }));
+
+  if (onHistory) {
+    root.appendChild(button(S.history, 'btn', onHistory));
+  }
 
   container.replaceChildren(root);
 }
