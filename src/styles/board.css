@@ -9,16 +9,23 @@
   width: 100%;
 }
 
+/* 漆器質感狀態列 */
 .status {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   font-size: 14px;
-  background: var(--felt-dark);
+  background: linear-gradient(180deg, #2e211a, var(--lacquer));
+  border: 1px solid rgba(217, 164, 65, 0.45);
   border-radius: 10px;
   padding: 8px 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 3px 10px rgba(0, 0, 0, 0.3);
 }
+.status__round { color: var(--gold); font-weight: 700; letter-spacing: 1px; }
 .status__scores { font-weight: 700; }
+.status__right { display: flex; align-items: center; gap: 10px; }
+.status__deck { opacity: 0.85; }
 
 .zone {
   display: flex;
@@ -34,16 +41,22 @@
   justify-content: center;
   min-height: calc(var(--card-w) * 1.6);
 }
-.hand--opp .card { width: calc(var(--card-w) * 0.66); }
+.hand--opp .card { width: calc(var(--card-w) * 0.62); }
+.hand--opp { min-height: calc(var(--card-w) * 1.1); }
 
+/* 場中央：內凹絨布面 */
 .table {
-  background: var(--felt-dark);
-  border-radius: 14px;
-  padding: 12px;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(255, 244, 214, 0.05), transparent 70%),
+    var(--felt-deep);
+  border: 1px solid rgba(217, 164, 65, 0.35);
+  border-radius: 16px;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: center;
+  box-shadow: inset 0 4px 18px rgba(0, 0, 0, 0.45), inset 0 0 0 3px rgba(217, 164, 65, 0.07);
 }
 .field {
   display: flex;
@@ -52,21 +65,12 @@
   justify-content: center;
   min-height: calc(var(--card-w) * 1.7);
 }
-.pending {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+.pending { display: flex; align-items: center; gap: 12px; }
 .pending__hint { font-size: 14px; color: var(--gold); font-weight: 700; }
 
-.captured {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  min-height: 20px;
-}
+.captured { display: flex; gap: 10px; flex-wrap: wrap; min-height: 20px; }
 .captured__group { display: flex; flex-direction: column; gap: 2px; }
-.captured__label { font-size: 11px; opacity: 0.7; }
+.captured__label { font-size: 11px; opacity: 0.75; letter-spacing: 1px; }
 .captured__cards { display: flex; }
 .captured .card { width: calc(var(--card-w) * 0.55); }
 .captured__cards .card:not(:first-child) { margin-left: calc(var(--card-w) * -0.28); }
@@ -76,23 +80,83 @@
   top: 0;
   font-size: 12px;
   font-weight: 700;
-  padding: 2px 8px;
+  padding: 2px 9px;
   border-radius: 10px;
+  z-index: 2;
 }
-.oya-mark { right: 0; background: var(--gold); color: #2c2410; }
-.koikoi-mark { left: 0; background: var(--accent); color: #fff; animation: pulse 1s infinite alternate; }
+.oya-mark { right: 0; background: linear-gradient(180deg, #e5b654, #c99427); color: #33250c; box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+.koikoi-mark { left: 0; background: linear-gradient(180deg, #c94a3c, #a3271c); color: #fff; animation: pulse 1s infinite alternate; }
 
 .turn-hint {
   text-align: center;
   font-size: 14px;
   min-height: 20px;
-  opacity: 0.85;
+  opacity: 0.9;
+  letter-spacing: 2px;
 }
 
-/* 桌面版：吃牌區移到兩側 */
+/* ---------- 役型進度面板 ---------- */
+.yaku-panel {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(217, 164, 65, 0.35);
+  border-radius: 12px;
+  padding: 6px 12px;
+  width: 100%;
+}
+.yaku-panel__summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 2px;
+  padding: 4px 0;
+  user-select: none;
+}
+.yaku-panel__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  padding: 8px 0 6px;
+}
+.yaku-panel__empty { font-size: 13px; opacity: 0.6; padding: 4px 0 8px; }
+.yaku-item {
+  background: rgba(243, 230, 207, 0.07);
+  border: 1px solid rgba(243, 230, 207, 0.14);
+  border-radius: 8px;
+  padding: 6px 9px;
+  font-size: 13px;
+}
+.yaku-item--met { border-color: var(--gold); background: rgba(217, 164, 65, 0.14); }
+.yaku-item--advance { border-color: #7fd48a; box-shadow: 0 0 8px rgba(127, 212, 138, 0.35); }
+.yaku-item__head { display: flex; justify-content: space-between; gap: 6px; }
+.yaku-item__name { font-weight: 700; }
+.yaku-item__pts { color: var(--gold); white-space: nowrap; }
+.yaku-item__need { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+.yaku-item__bar { height: 4px; background: rgba(255, 255, 255, 0.12); border-radius: 2px; margin-top: 5px; overflow: hidden; }
+.yaku-item__fill { height: 100%; background: var(--gold); border-radius: 2px; }
+.yaku-item__advance { color: #7fd48a; font-size: 11px; font-weight: 700; margin-top: 3px; }
+
+/* ---------- 役型速查表 / 牌詳情 ---------- */
+.cheatsheet__row { padding: 8px 0; border-bottom: 1px dashed rgba(44, 42, 36, 0.2); }
+.cheatsheet__head { display: flex; justify-content: space-between; align-items: baseline; }
+.cheatsheet__name { font-weight: 700; font-size: 16px; font-family: 'Noto Serif TC', serif; }
+.cheatsheet__pts { color: var(--accent); font-weight: 700; }
+.cheatsheet__desc { font-size: 13px; opacity: 0.8; margin: 2px 0 6px; }
+.cheatsheet__cards { display: flex; gap: 4px; }
+.cheatsheet__cards .card { width: 44px; }
+
+.card-detail { text-align: center; }
+.card-detail__card { width: 130px; margin: 0 auto 10px; }
+.card-detail__name { font-size: 22px; font-family: 'Noto Serif TC', serif; }
+.card-detail__zh { font-size: 14px; opacity: 0.8; margin: 4px 0; }
+.card-detail__type { font-size: 13px; opacity: 0.7; }
+.card-detail__related { font-size: 13px; margin-top: 8px; color: var(--accent); }
+
+/* 桌面版 */
 @media (min-width: 768px) {
   .game { padding: 16px; gap: 12px; }
-  .zone--opp, .zone--mine { flex-direction: row; align-items: flex-start; justify-content: space-between; }
+  .zone--opp, .zone--mine { flex-direction: row; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
   .zone .hand { flex: 1; }
-  .captured { max-width: 40%; }
+  .captured { max-width: 42%; }
+  .yaku-panel { width: 100%; }
 }

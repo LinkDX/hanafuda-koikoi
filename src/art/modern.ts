@@ -153,6 +153,7 @@ function buildSymbolContent(card: CardDef): string {
       : `${plantGlyph(card.month)}${specialGlyph(card)}`;
   return `
     <rect x="4" y="4" width="192" height="312" rx="14" fill="${theme.bg}" stroke="${theme.border}" stroke-width="5"/>
+    <rect x="12" y="12" width="176" height="296" rx="9" fill="none" stroke="${theme.border}" stroke-width="1.5" opacity="0.45"/>
     <text x="18" y="44" font-size="26" font-weight="600" fill="${theme.label}" font-family="serif">${MONTH_LABEL[card.month]}</text>
     <rect x="128" y="16" width="58" height="30" rx="15" fill="${theme.badgeBg}"/>
     <text x="157" y="38" font-size="19" text-anchor="middle" fill="#fdfaf2" font-family="serif">${theme.badge}</text>

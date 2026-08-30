@@ -44,4 +44,8 @@ export const S = {
   captured: {
     hikari: '光', tane: 'タネ', tanzaku: '短冊', kasu: 'カス',
   } as Record<string, string>,
+  yakuPanel: '役型進度',
+  cheatsheet: '役型速查表',
+  close: '關閉',
+  cardDetailHint: '長按或右鍵點牌可看說明',
 };

@@ -20,9 +20,20 @@ button.card:hover { transform: translateY(-6px); }
 button.card:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
 .card--back {
-  background: repeating-linear-gradient(135deg, #7a2620, #7a2620 6px, #8a2f28 6px, #8a2f28 12px);
-  border: 2px solid #5c1c17;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(217, 164, 65, 0.25) 0 18%, transparent 19%),
+    repeating-linear-gradient(135deg, #7a2620, #7a2620 6px, #8a2f28 6px, #8a2f28 12px);
+  border: 2px solid #4e1712;
+  border-radius: 8%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 0 0 2px rgba(217, 164, 65, 0.28);
+}
+
+.card--enter {
+  animation: card-enter 0.28s ease-out;
+}
+@keyframes card-enter {
+  from { transform: scale(0.6) translateY(-14px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
 }
 
 .card--selected {

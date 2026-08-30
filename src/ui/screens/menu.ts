@@ -2,6 +2,7 @@ import type { AILevel } from '../../ai';
 import type { RuleConfig } from '../../core/rules';
 import { DEFAULT_RULES } from '../../core/rules';
 import type { CardStyleId } from '../../art/styleTypes';
+import { renderCard } from '../components/cardEl';
 import { button, el } from '../components/dialogs';
 import { S } from '../strings';
 
@@ -19,6 +20,11 @@ export function renderMenu(
   const root = el('div', 'menu');
   root.appendChild(el('h1', 'menu__title', S.appTitle));
   root.appendChild(el('p', 'menu__subtitle', S.subtitle));
+
+  // 招牌光牌扇形展示
+  const hero = el('div', 'menu__hero');
+  for (const id of [0, 8, 28, 44]) hero.appendChild(renderCard(id, defaults.style));
+  root.appendChild(hero);
 
   let rounds = defaults.rules.totalRounds;
   let aiLevel = defaults.aiLevel;

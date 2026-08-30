@@ -10,9 +10,13 @@ import type { Action, GameState, Player } from '../../core/state';
 import { detectYaku } from '../../core/yaku';
 import { toPlayerView } from '../../core/view';
 import type { CardStyleId } from '../../art/styleTypes';
+import { withFlip } from '../animate';
+import { showCardDetail } from '../components/cardDetail';
 import { renderCard } from '../components/cardEl';
+import { showCheatsheet } from '../components/cheatsheet';
 import { button, el, showDialog } from '../components/dialogs';
 import type { DialogHandle } from '../components/dialogs';
+import { renderYakuPanel } from '../components/yakuPanel';
 import { S } from '../strings';
 
 export interface GameConfig {
@@ -35,6 +39,7 @@ export class GameScreen {
   private selected: CardId | null = null;
   private dialog: DialogHandle | null = null;
   private aiTimer: ReturnType<typeof setTimeout> | null = null;
+  private yakuPanelOpen = window.matchMedia('(min-width: 768px)').matches;
 
   constructor(container: HTMLElement, config: GameConfig) {
     this.config = config;
@@ -123,6 +128,18 @@ export class GameScreen {
   // ---------- 渲染 ----------
 
   private render(): void {
+    withFlip(document.body, () => this.renderInner());
+  }
+
+  /** 掛上「看牌詳情」手勢（右鍵／長按） */
+  private attachDetail(cardEl: HTMLElement, card: CardId): void {
+    cardEl.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      showCardDetail(card, this.state.rules, this.config.style);
+    });
+  }
+
+  private renderInner(): void {
     const s = this.state;
     const rs = s.roundState;
     const style = this.config.style;
@@ -135,7 +152,10 @@ export class GameScreen {
     const scores = el('span', 'status__scores');
     scores.textContent = `${S.you} ${s.scores[HUMAN]} : ${s.scores[AI_PLAYER]} ${S.ai}（${S.aiLevels[this.config.aiLevel]}）`;
     status.appendChild(scores);
-    status.appendChild(el('span', 'status__deck', S.deckCount(rs.deck.length)));
+    const statusRight = el('span', 'status__right');
+    statusRight.appendChild(el('span', 'status__deck', S.deckCount(rs.deck.length)));
+    statusRight.appendChild(button('役?', 'btn btn--small', () => showCheatsheet(s.rules, style)));
+    status.appendChild(statusRight);
     this.root.appendChild(status);
 
     // 對手區
@@ -165,6 +185,7 @@ export class GameScreen {
         cardEl.classList.add('card--choice');
         cardEl.addEventListener('click', () => this.dispatch({ type: 'chooseMatch', fieldCard: c }));
       }
+      this.attachDetail(cardEl, c);
       fieldEl.appendChild(cardEl);
     }
     if (awaitingChoice && rs.pendingCard !== undefined) {
@@ -186,12 +207,21 @@ export class GameScreen {
       if (myTurn) {
         cardEl.addEventListener('click', () => this.onHandCardClick(c));
       }
+      this.attachDetail(cardEl, c);
       myHand.appendChild(cardEl);
     }
     myZone.appendChild(myHand);
     if (rs.oya === HUMAN) myZone.appendChild(el('span', 'oya-mark', S.oyaMark));
     if (rs.koikoiDeclared[HUMAN] > 0) myZone.appendChild(el('span', 'koikoi-mark', 'こいこい中'));
     myZone.appendChild(this.renderCaptured(rs.captured[HUMAN], 'mine'));
+    myZone.appendChild(renderYakuPanel(
+      rs.captured[HUMAN],
+      s.rules,
+      this.selected,
+      rs.field,
+      this.yakuPanelOpen,
+      (open) => { this.yakuPanelOpen = open; },
+    ));
     this.root.appendChild(myZone);
 
     // 回合指示
