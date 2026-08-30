@@ -115,22 +115,29 @@ interface AIStrategy {
 interface StorageProvider {
   getMatches(): Promise<MatchRecord[]>;
   addMatch(r: MatchRecord): Promise<void>;
-  getSettings(): Promise<Settings | null>;
-  saveSettings(s: Settings): Promise<void>;
+  clearMatches(): Promise<void>;
+  getSettings(): Promise<StoredSettings | null>;
+  saveSettings(s: StoredSettings): Promise<void>;
+  getSavedGame(): Promise<SavedGame | null>;
+  saveGame(s: SavedGame): Promise<void>;
+  clearSavedGame(): Promise<void>;
   clear(): Promise<void>;
 }
 ```
 
-- `MatchRecord v1`：`{ schemaVersion, id, timestamp, aiLevel, totalRounds, finalScores, winner, rounds: [{ winner, yaku[], points, koikoiCount }] }`
+- `MatchRecord v1`：`{ schemaVersion, id, timestamp, aiLevel, totalRounds, finalScores, winner, rounds: [{ winner, yaku[], points, koikoi }] }`
+- `SavedGame v1`（進行中對局）：`{ schemaVersion, timestamp, aiLevel, style, state: GameState, roundLog }` — 每個動作後保存，refresh／離開可續玩；終局或開新局時清除。引擎狀態為純 JSON 可序列化物件，直接還原即可繼續。
 - 聚合統計（各等級勝率、總場數、單局最高分、役達成次數）由紀錄計算。
-- 現行實作 localStorage（key `hkk:records:v1`、`hkk:settings:v1`，try/catch 防私密模式）。
+- 現行實作 localStorage（key `hkk:records:v1`、`hkk:settings:v1`、`hkk:game:v1`，try/catch 防私密模式）。
 - 介面刻意 async：日後以 Firebase 實作同介面即可跨裝置同步，遊戲／UI 層不需改動。
 
 ## 6. UI / RWD / PWA
 
-- 手機直向：AI 吃牌區／場札＋牌堆／手牌 縱向排列，役型面板為 `<details>` 摺疊；桌面：吃牌兩側。斷點 768px，牌尺寸 `clamp()`，tap target ≥ 44px。
+- **版面有界原則**：牌寬 `--card-w` 同時受視窗寬與高約束（手機 `min(15vw, (100dvh−272px)/11)`、平板 `min(5.5vw, …)`、桌面 `min(10.5vw, (100vh−240px)/9.5)`）；場札逾 10 張加 `.field--dense` 固定 8 欄；吃牌區固定高度單列、過寬時內部橫捲（同組逾 8 張加大重疊）；展示槽（打出／待配對）絕對定位於場中央永久保留區。任何牌數變化都不改變版面框架。
+- 手機直向（<768px）：縱向排列撐滿視窗，役型面板為 `<details>` 摺疊；平板（768–1023）：吃牌移至手牌側邊；桌面（≥1024）：雙欄格線、役型面板固定右欄自帶捲動。tap target ≥ 44px。
 - 提示：點手牌高亮同月場札（`.matchable`）；役型面板顯示進度與缺牌。
-- **事件重播動畫**：`advance()` 回傳的 `GameEvent[]` 逐一套用到與引擎解耦的 `VisualState`，每步重繪＋停頓（打出聚光燈→吃進→翻牌堆→成役橫幅），FLIP 補間移動的牌。停頓節奏屬資訊性，`prefers-reduced-motion` 下仍保留（縮短為 0.7×），僅停用裝飾動畫。
+- 親／こいこい狀態以狀態列徽章呈現（不覆蓋牌面）。
+- **事件重播動畫**：`advance()` 回傳的 `GameEvent[]` 逐一套用到與引擎解耦的 `VisualState`，每步重繪＋停頓（打出聚光燈→吃進→翻牌堆→成役橫幅）。移動補間採 FLIP：長距離（跨區）用 fixed 飛行層複製體（不被 overflow 容器裁切，落地才顯示真牌），同區小補位就地補間；翻牌自山札牌堆錨點飛出、AI 出牌自其手牌中央牌背錨點飛出。停頓節奏屬資訊性，`prefers-reduced-motion` 下仍保留（縮短），僅停用裝飾動畫。
 - PWA icons 由 `npx tsx scripts/gen-icons.ts`（sharp）自 SVG 生成。
 - PWA：vite-plugin-pwa `autoUpdate` 全資產 precache，無外部資源，完全離線。
 - 部署：GitHub Actions → GitHub Pages，`base: '/hanafuda-koikoi/'`。
