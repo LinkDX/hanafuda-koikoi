@@ -18,6 +18,7 @@ export function renderMenu(
   onStart: (result: MenuResult) => void,
   onHistory?: () => void,
   onRules?: () => void,
+  onContinue?: () => void,
 ): void {
   const root = el('div', 'menu');
   root.appendChild(el('h1', 'menu__title', S.appTitle));
@@ -95,7 +96,11 @@ export function renderMenu(
   variants.appendChild(variantRow);
   root.appendChild(variants);
 
-  root.appendChild(button(S.start, 'btn btn--primary btn--start', () => {
+  if (onContinue) {
+    root.appendChild(button(S.continueGame, 'btn btn--primary btn--start', onContinue));
+  }
+
+  root.appendChild(button(S.start, `btn btn--start${onContinue ? '' : ' btn--primary'}`, () => {
     onStart({
       rules: { ...DEFAULT_RULES, totalRounds: rounds, hanamiZake: hanami, tsukimiZake: tsukimi },
       aiLevel,

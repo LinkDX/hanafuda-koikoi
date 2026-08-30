@@ -47,5 +47,7 @@ export const S = {
   yakuPanel: '役型進度',
   cheatsheet: '役型速查表',
   close: '關閉',
+  exit: '離開',
+  continueGame: '繼續對戰',
   cardDetailHint: '長按或右鍵點牌可看說明',
 };

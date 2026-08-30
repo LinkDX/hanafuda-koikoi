@@ -10,7 +10,7 @@ import type { Action, GameEvent, GameState, Player } from '../../core/state';
 import { detectYaku } from '../../core/yaku';
 import { toPlayerView } from '../../core/view';
 import type { CardStyleId } from '../../art/styleTypes';
-import type { MatchRecord, MatchRecordRound, StorageProvider } from '../../storage/provider';
+import type { MatchRecord, MatchRecordRound, SavedGame, StorageProvider } from '../../storage/provider';
 import { withFlip } from '../animate';
 import { showCardDetail } from '../components/cardDetail';
 import { renderCard } from '../components/cardEl';
@@ -26,6 +26,8 @@ export interface GameConfig {
   style: CardStyleId;
   storage: StorageProvider;
   seed?: number;
+  /** 續玩：從存檔還原對局 */
+  resume?: SavedGame;
   onExit(): void;
   onPlayAgain(): void;
 }
@@ -85,13 +87,35 @@ export class GameScreen {
     this.ai = createAI(config.aiLevel, createRng(seed ^ 0x5f3759df));
     this.root = el('div', 'game');
     container.replaceChildren(this.root);
-    this.state = advance(createMatch(config.rules, seed), { type: 'startMatch' }).state;
+    if (config.resume) {
+      this.state = config.resume.state;
+      this.roundLog.push(...config.resume.roundLog);
+    } else {
+      this.state = advance(createMatch(config.rules, seed), { type: 'startMatch' }).state;
+    }
     this.visual = visualFromState(this.state);
     if (import.meta.env.DEV) {
       (window as unknown as { __game: GameScreen }).__game = this; // dev 除錯用
     }
+    this.saveProgress();
     this.render();
     this.pump();
+  }
+
+  /** 每個動作後保存進度（refresh／離開後可續玩）；終局清除 */
+  private saveProgress(): void {
+    if (this.state.phase === 'matchEnd') {
+      void this.config.storage.clearSavedGame();
+      return;
+    }
+    void this.config.storage.saveGame({
+      schemaVersion: 1,
+      timestamp: Date.now(),
+      aiLevel: this.config.aiLevel,
+      style: this.config.style,
+      state: this.state,
+      roundLog: [...this.roundLog],
+    });
   }
 
   destroy(): void {
@@ -105,6 +129,7 @@ export class GameScreen {
     const { state, events } = advance(this.state, action);
     this.state = state;
     this.selected = null;
+    this.saveProgress();
     this.animating = true;
     void this.playEvents(events).then(() => {
       this.animating = false;
@@ -279,6 +304,7 @@ export class GameScreen {
     const statusRight = el('span', 'status__right');
     statusRight.appendChild(el('span', 'status__deck', S.deckCount(v.deckCount)));
     statusRight.appendChild(button('役?', 'btn btn--small', () => showCheatsheet(s.rules, style)));
+    statusRight.appendChild(button(S.exit, 'btn btn--small', () => this.config.onExit()));
     status.appendChild(statusRight);
     this.root.appendChild(status);
 

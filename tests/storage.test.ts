@@ -63,6 +63,30 @@ describe('LocalStorageProvider', () => {
     const p = new LocalStorageProvider(storage);
     expect(await p.getMatches()).toEqual([]);
   });
+
+  it('進行中對局的存讀清', async () => {
+    const p = new LocalStorageProvider(fakeStorage());
+    expect(await p.getSavedGame()).toBeNull();
+    const saved = {
+      schemaVersion: 1 as const,
+      timestamp: 123,
+      aiLevel: 2 as const,
+      style: 'traditional' as const,
+      roundLog: [],
+      state: { round: 1 } as never,
+    };
+    await p.saveGame(saved);
+    expect((await p.getSavedGame())?.aiLevel).toBe(2);
+    await p.clearSavedGame();
+    expect(await p.getSavedGame()).toBeNull();
+  });
+
+  it('損壞的對局存檔回傳 null', async () => {
+    const storage = fakeStorage();
+    storage.setItem('hkk:game:v1', 'oops');
+    const p = new LocalStorageProvider(storage);
+    expect(await p.getSavedGame()).toBeNull();
+  });
 });
 
 describe('computeStats', () => {

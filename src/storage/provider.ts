@@ -1,4 +1,4 @@
-import type { Player } from '../core/state';
+import type { GameState, Player } from '../core/state';
 import type { YakuId } from '../core/yaku';
 import type { CardStyleId } from '../art/styleTypes';
 
@@ -32,6 +32,16 @@ export interface StoredSettings {
   style: CardStyleId;
 }
 
+/** 進行中的對局存檔（refresh／退出後可續玩） */
+export interface SavedGame {
+  schemaVersion: 1;
+  timestamp: number;
+  aiLevel: 1 | 2 | 3;
+  style: CardStyleId;
+  state: GameState;
+  roundLog: MatchRecordRound[];
+}
+
 /**
  * 儲存抽象層 — 介面刻意設計為 async：
  * 現行實作為 localStorage，日後可替換為 Firebase 等雲端後端
@@ -44,5 +54,9 @@ export interface StorageProvider {
   clearMatches(): Promise<void>;
   getSettings(): Promise<StoredSettings | null>;
   saveSettings(settings: StoredSettings): Promise<void>;
+  /** 進行中對局：讀／存／清 */
+  getSavedGame(): Promise<SavedGame | null>;
+  saveGame(saved: SavedGame): Promise<void>;
+  clearSavedGame(): Promise<void>;
   clear(): Promise<void>;
 }

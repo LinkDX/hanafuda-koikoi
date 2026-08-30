@@ -3,7 +3,7 @@ import { ensureSprite } from '../art/sprites';
 import { traditionalStyle } from '../art/traditional';
 import { DEFAULT_RULES } from '../core/rules';
 import { LocalStorageProvider } from '../storage/localStorage';
-import type { StoredSettings } from '../storage/provider';
+import type { SavedGame, StoredSettings } from '../storage/provider';
 import { GameScreen } from './screens/game';
 import { renderHistory } from './screens/history';
 import { renderMenu } from './screens/menu';
@@ -48,11 +48,27 @@ export function initApp(container: HTMLElement): void {
   const showMenu = (): void => {
     game?.destroy();
     game = null;
-    renderMenu(container, settings, (result) => {
-      settings = result;
-      void storage.saveSettings(toStored(result));
-      startGame();
-    }, showHistory, showRules);
+    void storage.getSavedGame().then((saved) => {
+      renderMenu(container, settings, (result) => {
+        settings = result;
+        void storage.saveSettings(toStored(result));
+        void storage.clearSavedGame(); // 開新局：捨棄舊進度
+        startGame();
+      }, showHistory, showRules, saved ? () => resumeGame(saved) : undefined);
+    });
+  };
+
+  const resumeGame = (saved: SavedGame): void => {
+    game?.destroy();
+    game = new GameScreen(container, {
+      rules: saved.state.rules,
+      aiLevel: saved.aiLevel,
+      style: saved.style,
+      storage,
+      resume: saved,
+      onExit: showMenu,
+      onPlayAgain: startGame,
+    });
   };
 
   const showRules = (): void => {
@@ -83,8 +99,9 @@ export function initApp(container: HTMLElement): void {
       : config);
   };
 
-  void storage.getSettings().then((stored) => {
+  void Promise.all([storage.getSettings(), storage.getSavedGame()]).then(([stored, saved]) => {
     if (stored) settings = fromStored(stored);
-    showMenu();
+    if (saved) resumeGame(saved); // refresh 後直接續玩
+    else showMenu();
   });
 }
