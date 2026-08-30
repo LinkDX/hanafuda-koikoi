@@ -9,6 +9,15 @@
   width: 100%;
 }
 
+/* 手機直向：加大牌面、撐滿整個視窗高度 */
+@media (max-width: 767px) {
+  :root { --card-w: clamp(52px, 15vw, 80px); }
+  .game { justify-content: space-between; gap: 6px; }
+  .table { flex: 1; justify-content: center; }
+  .hand--opp { min-height: auto; }
+  .hand { min-height: auto; }
+}
+
 /* 漆器質感狀態列 */
 .status {
   display: flex;

@@ -57,8 +57,12 @@ function visualFromState(state: GameState): VisualState {
 const reducedMotion = (): boolean =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/**
+ * 事件重播的節奏停頓是「資訊」而非裝飾 —
+ * 減少動態偏好下仍保留停頓（縮短），只由 CSS/FLIP 停用裝飾動畫。
+ */
 const wait = (ms: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, reducedMotion() ? 0 : ms));
+  new Promise((resolve) => setTimeout(resolve, reducedMotion() ? ms * 0.7 : ms));
 
 export class GameScreen {
   private state: GameState;

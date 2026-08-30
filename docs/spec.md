@@ -128,9 +128,10 @@ interface StorageProvider {
 
 ## 6. UI / RWD / PWA
 
-- 手機直向：AI 吃牌區／場札＋牌堆／手牌 縱向排列，役型面板為 bottom-sheet；桌面：場中央、吃牌兩側、役型面板右側。斷點 768px，牌尺寸 `clamp()`，tap target ≥ 44px。
+- 手機直向：AI 吃牌區／場札＋牌堆／手牌 縱向排列，役型面板為 `<details>` 摺疊；桌面：吃牌兩側。斷點 768px，牌尺寸 `clamp()`，tap target ≥ 44px。
 - 提示：點手牌高亮同月場札（`.matchable`）；役型面板顯示進度與缺牌。
-- FLIP 動畫（發牌、吃牌、翻牌），尊重 `prefers-reduced-motion`。
+- **事件重播動畫**：`advance()` 回傳的 `GameEvent[]` 逐一套用到與引擎解耦的 `VisualState`，每步重繪＋停頓（打出聚光燈→吃進→翻牌堆→成役橫幅），FLIP 補間移動的牌。停頓節奏屬資訊性，`prefers-reduced-motion` 下仍保留（縮短為 0.7×），僅停用裝飾動畫。
+- PWA icons 由 `npx tsx scripts/gen-icons.ts`（sharp）自 SVG 生成。
 - PWA：vite-plugin-pwa `autoUpdate` 全資產 precache，無外部資源，完全離線。
 - 部署：GitHub Actions → GitHub Pages，`base: '/hanafuda-koikoi/'`。
 
