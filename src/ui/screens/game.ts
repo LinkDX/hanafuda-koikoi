@@ -62,19 +62,20 @@ function visualFromState(state: GameState): VisualState {
 const reducedMotion = (): boolean =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/** 手指一碰就反應（不等 touchend 的 click），鍵盤觸發仍走 click */
+/**
+ * 手指一碰就反應（不等 touchend 的 click），鍵盤觸發仍走 click。
+ * 去重採全域時間戳：pointerdown 反應後重繪會換掉元素，
+ * 同一次點擊的 click 會落在新元素上，元素內旗標擋不住。
+ */
+let lastPointerTapTs = 0;
 function onTap(el: HTMLElement, handler: () => void): void {
-  let pointerHandled = false;
   el.addEventListener('pointerdown', (e) => {
     if (e.button !== 0) return;
-    pointerHandled = true;
+    lastPointerTapTs = performance.now();
     handler();
   });
   el.addEventListener('click', () => {
-    if (pointerHandled) {
-      pointerHandled = false;
-      return;
-    }
+    if (performance.now() - lastPointerTapTs < 400) return; // 同一次觸擊的殘餘 click
     handler();
   });
 }
