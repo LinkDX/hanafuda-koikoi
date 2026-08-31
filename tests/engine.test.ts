@@ -165,6 +165,28 @@ describe('成役與こいこい', () => {
   });
 });
 
+describe('最後一張手牌成役', () => {
+  it('自動勝負仍先發出 yakuFormed（供 UI 播成役特效）再 roundEnded', () => {
+    const deal: Deal = {
+      hands: [[9], [13]],
+      field: [11, 18, 22, 26],
+      deck: [30, 31, 34, 38],
+    };
+    let state = startScripted(deal).state;
+    state = structuredClone(state);
+    state.roundState.captured[0] = [1, 5]; // 赤短差一張
+    const r = advance(state, { type: 'playHandCard', card: 9 });
+    const types = evTypes(r.events);
+    expect(types).toContain('yakuFormed');
+    expect(types).toContain('roundEnded');
+    expect(types.indexOf('yakuFormed')).toBeLessThan(types.indexOf('roundEnded'));
+    const ev = r.events.find((e) => e.type === 'yakuFormed');
+    expect(ev && 'newYaku' in ev ? ev.newYaku.map((y) => y.id) : []).toContain('akatan');
+    expect(r.state.phase).toBe('roundEnd');
+    expect(r.state.roundResult?.winner).toBe(0);
+  });
+});
+
 describe('局與場的推進', () => {
   it('acknowledgeRound 後進入下一局且勝者當親', () => {
     const state = (() => {

@@ -142,7 +142,9 @@ export function advance(state: GameState, action: Action): { state: GameState; e
     const newYaku = all.filter((y) => (locked[y.id] ?? 0) < y.points);
     if (newYaku.length > 0) {
       if (rs.hands[player].length === 0) {
-        endRound(player); // 最後一張成役：自動勝負
+        // 最後一張成役：自動勝負（仍發出 yakuFormed 供 UI 播成役特效）
+        events.push({ type: 'yakuFormed', player, newYaku, allYaku: all });
+        endRound(player);
         return;
       }
       s.pendingYaku = newYaku;
