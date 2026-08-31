@@ -42,15 +42,22 @@ button.card:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px;
 }
 .card--selected svg { box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5); }
 
+/* 高亮環畫在牌「外側」，不會被任何畫風的牌框吃掉 */
 .card--matchable svg {
   outline: 3px solid var(--gold);
-  outline-offset: -3px;
+  outline-offset: 2px;
+  box-shadow: 0 0 12px rgba(242, 214, 75, 0.85), 0 2px 6px rgba(0, 0, 0, 0.35);
   animation: pulse 1s ease-in-out infinite alternate;
 }
 
+.card--choice {
+  transform: translateY(-5px);
+  z-index: 3;
+}
 .card--choice svg {
-  outline: 3px solid var(--accent);
-  outline-offset: -3px;
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 7px rgba(200, 54, 43, 0.6), 0 0 18px rgba(255, 255, 255, 0.5), 0 6px 14px rgba(0, 0, 0, 0.5);
   animation: pulse 0.7s ease-in-out infinite alternate;
 }
 
