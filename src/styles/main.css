@@ -116,6 +116,7 @@ button { font-family: inherit; cursor: pointer; }
 .btn--start { font-size: 18px; padding: 14px; margin-top: 8px; letter-spacing: 6px; }
 .menu__links { display: flex; gap: 10px; }
 .menu__links .btn { flex: 1; }
+.menu__version { font-size: 11px; opacity: 0.45; margin-top: -6px; letter-spacing: 1px; }
 
 /* ---------- 對話框 ---------- */
 .dialog-overlay {

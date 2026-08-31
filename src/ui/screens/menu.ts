@@ -115,5 +115,7 @@ export function renderMenu(
   if (onAchievements) links.appendChild(button(S.achievements, 'btn', onAchievements));
   if (links.childElementCount > 0) root.appendChild(links);
 
+  root.appendChild(el('p', 'menu__version', `v${__APP_VERSION__}`));
+
   container.replaceChildren(root);
 }
