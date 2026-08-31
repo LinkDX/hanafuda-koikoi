@@ -13,6 +13,10 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: false,
+      workbox: {
+        // 圖集卡面（public/wiki）也要離線可用
+        globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
+      },
       includeAssets: ['icons/*.png', 'favicon.svg'],
       manifest: {
         name: '花牌 こいこい',

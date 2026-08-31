@@ -103,11 +103,14 @@ interface AIStrategy {
   - こいこい決策：估計續玩期望淨得分（含翻倍規則、剩餘回合、對手成役風險）vs 立即結算。
   - 同步計算（<5ms）；介面為 async，日後可加 Web Worker + Monte Carlo 等級。
 
-## 4. 卡面 SVG
+## 4. 卡面風格系統（v1.6.0 起）
 
-- 每風格建一個 sprite（48 個 `<symbol viewBox="0 0 200 320">`）注入一次，卡牌皆為 `<use>`；切換風格即換 href 前綴。
-- 傳統風：12 個月份植物 motif ＋ ~15 個特殊物件（鶴、幕、猪鹿蝶、雁、盃、鳳凰…）＋ 48 條圖層組合表。
-- 現代風：牌種底色＋月份漢字＋簡化植物 glyph＋牌種徽章，全程式生成。
+`CardStyle = { source: ArtSourceId, framed: boolean }` — 「畫風來源 × 圖鑑資訊框」二維組合：
+
+- **畫風來源**：`washi`（自繪原創，48 張手繪 SVG 字串，`src/art/traditional/monthNN.ts`）＋四套 Wikimedia 圖集（`hanafuda-black`／`hanafuda-red`／`hwatu`／`hwatu-jp`，CC BY-SA 4.0，檔案在 `public/wiki/<set>/<cardId>.svg`）。圖集 symbol 以 `<image>` 引用獨立檔案（隔離、無 id 衝突）；花鬪兩套的 11/12 月與日式互換，映射封裝於 `scripts/fetch-wiki-cards.ts` 的命名函數。
+- **圖鑑框**：`src/art/frame.ts` 的資訊框 chrome（月份、牌種徽章、牌名）＋插畫窗；washi 內嵌剝框畫作、圖集內嵌 `<use>`。
+- sprite 以冪等 registry 注入（`ensureStyleSprites`），`renderCard` 自動確保所需 sprite；切換畫風即時生效（選單 hero、進行中對局、規則頁、成就頁）。
+- PWA precache 涵蓋全部圖集（`workbox.globPatterns` 含 svg），離線可用全部畫風。
 
 ## 5. 儲存抽象與對戰紀錄
 

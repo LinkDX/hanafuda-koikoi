@@ -10,3 +10,5 @@ dev-dist/
 # 編輯器
 .vscode/
 .idea/
+
+scripts/.wiki-urls-*.json
