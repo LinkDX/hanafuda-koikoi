@@ -421,6 +421,7 @@ export class GameScreen {
     else if (!this.animating && rs.turn === AI_PLAYER && s.phase !== 'roundEnd' && s.phase !== 'matchEnd') {
       hint.textContent = S.aiThinking;
     }
+    hint.appendChild(el('span', 'game__version', `v${__APP_VERSION__}`));
     this.root.appendChild(hint);
   }
 
