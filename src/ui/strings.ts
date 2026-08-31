@@ -30,6 +30,11 @@ export const S = {
   roundWin: (name: string, pts: number) => `${name} 本局獲得 ${pts} 點`,
   roundDraw: '流局 — 無人成役，親續任',
   instantWin: { teshi: '手四！', kuttsuki: 'くっつき！' },
+  instantWinDesc: {
+    teshi: (name: string) => `${name}發到的手牌中有同一月份的牌 4 張（手四）— 依規則不用打牌，直接獲勝本局並得 6 點。`,
+    kuttsuki: (name: string) => `${name}發到的手牌恰好是 4 組同月份對子（くっつき）— 依規則不用打牌，直接獲勝本局並得 6 點。`,
+  },
+  redealNotice: '場上出現同月份 4 張，重新發牌',
   matchEnd: '對戰結束',
   matchWinner: (name: string) => `${name} 獲勝！`,
   matchDraw: '平手',

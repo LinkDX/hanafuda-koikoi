@@ -147,8 +147,13 @@ export class GameScreen {
       if (this.destroyed) return;
       const v = this.visual;
       switch (e.type) {
-        case 'roundDealt':
         case 'redeal':
+          await this.banner(S.redealNotice, 1400);
+          this.visual = visualFromState(this.state);
+          this.render();
+          await wait(350);
+          break;
+        case 'roundDealt':
           this.visual = visualFromState(this.state);
           this.render();
           await wait(350);
@@ -494,6 +499,7 @@ export class GameScreen {
       const name = result.winner === HUMAN ? S.you : S.ai;
       if (result.instantWin) {
         content.appendChild(el('h2', 'dialog__title', S.instantWin[result.instantWin]));
+        content.appendChild(el('p', 'dialog__desc', S.instantWinDesc[result.instantWin](name)));
       } else {
         content.appendChild(el('h2', 'dialog__title', S.roundWin(name, result.breakdown?.total ?? 0)));
       }
