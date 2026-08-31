@@ -4,6 +4,7 @@ import { traditionalStyle } from '../art/traditional';
 import { DEFAULT_RULES } from '../core/rules';
 import { LocalStorageProvider } from '../storage/localStorage';
 import type { SavedGame, StoredSettings } from '../storage/provider';
+import { renderAchievements } from './screens/achievements';
 import { GameScreen } from './screens/game';
 import { renderHistory } from './screens/history';
 import { renderMenu } from './screens/menu';
@@ -54,8 +55,14 @@ export function initApp(container: HTMLElement): void {
         void storage.saveSettings(toStored(result));
         void storage.clearSavedGame(); // 開新局：捨棄舊進度
         startGame();
-      }, showHistory, showRules, saved ? () => resumeGame(saved) : undefined);
+      }, showHistory, showRules, saved ? () => resumeGame(saved) : undefined, showAchievements);
     });
+  };
+
+  const showAchievements = (): void => {
+    game?.destroy();
+    game = null;
+    void renderAchievements(container, storage, settings.style, showMenu);
   };
 
   const resumeGame = (saved: SavedGame): void => {

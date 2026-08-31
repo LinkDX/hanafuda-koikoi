@@ -19,6 +19,7 @@ export function renderMenu(
   onHistory?: () => void,
   onRules?: () => void,
   onContinue?: () => void,
+  onAchievements?: () => void,
 ): void {
   const root = el('div', 'menu');
   root.appendChild(el('h1', 'menu__title', S.appTitle));
@@ -111,6 +112,7 @@ export function renderMenu(
   const links = el('div', 'menu__links');
   if (onRules) links.appendChild(button(S.rules, 'btn', onRules));
   if (onHistory) links.appendChild(button(S.history, 'btn', onHistory));
+  if (onAchievements) links.appendChild(button(S.achievements, 'btn', onAchievements));
   if (links.childElementCount > 0) root.appendChild(links);
 
   container.replaceChildren(root);

@@ -54,5 +54,6 @@ export const S = {
   close: '關閉',
   exit: '離開',
   continueGame: '繼續對戰',
+  achievements: '成就',
   cardDetailHint: '長按或右鍵點牌可看說明',
 };

@@ -150,16 +150,23 @@ interface StorageProvider {
 - storage：CRUD、schema 版本、統計正確性。
 - Soak：`npm run simulate` 萬場無例外，役頻率合理。
 
-## 8. 未來規劃（Backlog）
+## 8. 成就系統（v1.3.0）
+
+- `src/achievements/defs.ts`：25 個 `AchievementDef { id, name, desc, icon, check(records) }` — 判定為純函數，吃整份 `MatchRecord[]` 重算，因此既有戰績自動回填、易於測試。
+- 役圖鑑 12 個（首次以每種役獲勝該局，icon 用代表牌卡面）＋行為成就 13 個（初陣、三級制霸、三連勝、完封、大豐收 30 點、會心一擊 14 點、こいこい大成功、見事反殺、天選之人即勝、常客 10 場、百戰老手 50 場）。
+- 保存：`hkk:achievements:v1`（id → 解鎖 epoch ms），經 `StorageProvider.getAchievements/saveAchievements`。
+- 觸發：場末寫入紀錄後 diff 新解鎖 → 右上金色 toast 逐一彈出；成就頁載入時亦回填合併。
+- `MatchRecordRound` 增加 optional `instantWin`（手四／くっつき），供「天選之人」判定。
+
+## 9. 未來規劃（Backlog）
 
 依使用者需求記錄，尚未排程：
 
-- **成就系統**：達成條件（首次五光、こいこい反殺、連勝、以每種役獲勝…）與徽章展示；資料經 `StorageProvider` 保存，沿用日後雲端同步路線。
 - **道具系統**：對局中可使用的道具（例如偷看牌堆頂、重抽手牌、役分加倍券等，規則設計待定）；需要考慮與計分公平性、AI 是否也能使用。
 - Firebase 跨裝置同步（`StorageProvider` 既有規劃）。
 - Monte Carlo 第四級 AI（`AIStrategy` 介面既有規劃）。
 
-## 9. 版本策略
+## 10. 版本策略
 
 - semver：0.1.0 scaffold → 每里程碑升 minor → 1.0.0 功能完整上線；release 打 tag `vX.Y.Z` 並更新 CHANGELOG。
 - 重大規則變更或存檔 schema 不相容 → major；新功能 → minor；修錯 → patch。

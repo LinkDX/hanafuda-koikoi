@@ -81,6 +81,13 @@ describe('LocalStorageProvider', () => {
     expect(await p.getSavedGame()).toBeNull();
   });
 
+  it('成就解鎖時間的存讀', async () => {
+    const p = new LocalStorageProvider(fakeStorage());
+    expect(await p.getAchievements()).toEqual({});
+    await p.saveAchievements({ 'first-win': 1700000000000 });
+    expect((await p.getAchievements())['first-win']).toBe(1700000000000);
+  });
+
   it('損壞的對局存檔回傳 null', async () => {
     const storage = fakeStorage();
     storage.setItem('hkk:game:v1', 'oops');

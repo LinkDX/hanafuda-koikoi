@@ -151,3 +151,88 @@
   .yaku-fx__rays { opacity: 0.5; }
   .yaku-fx__flash { opacity: 0; }
 }
+
+/* ---------- 成就解鎖 toast ---------- */
+.ach-toasts {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.ach-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(180deg, #2e211a, #241a15);
+  border: 1.5px solid var(--gold);
+  border-radius: 12px;
+  padding: 10px 16px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), inset 0 0 0 3px rgba(217, 164, 65, 0.12);
+  animation: ach-in 0.45s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.ach-toast--out { opacity: 0; transform: translateX(30px); }
+.ach-toast__icon { font-size: 26px; line-height: 1; display: flex; }
+.ach-toast__icon .card { width: 34px; }
+.ach-toast__text { display: flex; flex-direction: column; }
+.ach-toast__label { font-size: 11px; color: var(--gold); letter-spacing: 3px; }
+.ach-toast__name { font-size: 16px; font-weight: 700; color: var(--paper); font-family: 'Noto Serif TC', serif; white-space: nowrap; }
+@keyframes ach-in {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ---------- 成就牆 ---------- */
+.ach-page {
+  margin: 24px auto;
+  padding: 28px 24px;
+  max-width: 720px;
+  width: calc(100% - 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(217, 164, 65, 0.4);
+  border-radius: 18px;
+}
+.ach-page__title {
+  font-size: 28px;
+  color: var(--gold);
+  text-align: center;
+  letter-spacing: 4px;
+  font-family: 'Noto Serif TC', serif;
+}
+.ach-page__progress { text-align: center; font-size: 14px; opacity: 0.8; }
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+.ach-cell {
+  background: rgba(243, 230, 207, 0.05);
+  border: 1px solid rgba(243, 230, 207, 0.12);
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.ach-cell .card, .ach-cell__icon { filter: grayscale(1); opacity: 0.45; }
+.ach-cell--unlocked {
+  border-color: rgba(217, 164, 65, 0.65);
+  background: rgba(217, 164, 65, 0.1);
+  box-shadow: inset 0 0 14px rgba(217, 164, 65, 0.12);
+}
+.ach-cell--unlocked .card, .ach-cell--unlocked .ach-cell__icon { filter: none; opacity: 1; }
+.ach-cell__icon { font-size: 30px; line-height: 1; min-height: 34px; display: flex; align-items: center; }
+.ach-cell__icon .card { width: 40px; }
+.ach-cell__name { font-size: 14px; font-weight: 700; color: var(--paper); }
+.ach-cell--unlocked .ach-cell__name { color: var(--gold); }
+.ach-cell__desc { font-size: 11.5px; opacity: 0.7; line-height: 1.5; }
+.ach-cell__date { font-size: 10.5px; color: var(--gold); opacity: 0.8; }

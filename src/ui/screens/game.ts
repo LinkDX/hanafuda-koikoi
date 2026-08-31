@@ -17,6 +17,8 @@ import { renderCard } from '../components/cardEl';
 import { showCheatsheet } from '../components/cheatsheet';
 import { button, el, showDialog } from '../components/dialogs';
 import type { DialogHandle } from '../components/dialogs';
+import { ACHIEVEMENTS, computeAchievements } from '../../achievements/defs';
+import { showAchievementToasts } from '../components/achievementToast';
 import { showYakuEffect } from '../components/yakuEffect';
 import { renderYakuPanel } from '../components/yakuPanel';
 import { S } from '../strings';
@@ -490,6 +492,7 @@ export class GameScreen {
         points: result?.breakdown?.total ?? 0,
         yaku: (result?.breakdown?.yaku ?? []).map((y) => ({ id: y.id, points: y.points })),
         koikoi: [...s.roundState.koikoiDeclared],
+        ...(result?.instantWin ? { instantWin: result.instantWin } : {}),
       });
     }
     const content = el('div');
@@ -542,7 +545,7 @@ export class GameScreen {
     this.dialog = showDialog(content);
   }
 
-  /** 場末寫入對戰紀錄（一場只記一次） */
+  /** 場末寫入對戰紀錄並檢查新成就（一場只記一次） */
   private recordMatch(): void {
     if (this.recorded) return;
     this.recorded = true;
@@ -558,6 +561,21 @@ export class GameScreen {
       winner: me === ai ? null : me > ai ? HUMAN : AI_PLAYER,
       rounds: [...this.roundLog],
     };
-    void this.config.storage.addMatch(record);
+    void this.checkAchievements(record);
+  }
+
+  private async checkAchievements(record: MatchRecord): Promise<void> {
+    const storage = this.config.storage;
+    await storage.addMatch(record);
+    const records = await storage.getMatches();
+    const unlocked = computeAchievements(records);
+    const saved = await storage.getAchievements();
+    const fresh = ACHIEVEMENTS.filter((a) => unlocked.has(a.id) && !(a.id in saved));
+    if (fresh.length === 0) return;
+    const now = Date.now();
+    const merged = { ...saved };
+    for (const a of fresh) merged[a.id] = now;
+    await storage.saveAchievements(merged);
+    if (!this.destroyed) void showAchievementToasts(fresh, this.config.style);
   }
 }

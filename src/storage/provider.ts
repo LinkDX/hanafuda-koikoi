@@ -9,6 +9,8 @@ export interface MatchRecordRound {
   yaku: { id: YakuId; points: number }[];
   /** 雙方こいこい宣告次數 */
   koikoi: [number, number];
+  /** 手四／くっつき即勝 */
+  instantWin?: 'teshi' | 'kuttsuki';
 }
 
 /** 對戰紀錄 schema v1 — 變更欄位時 bump schemaVersion 並寫遷移 */
@@ -58,5 +60,8 @@ export interface StorageProvider {
   getSavedGame(): Promise<SavedGame | null>;
   saveGame(saved: SavedGame): Promise<void>;
   clearSavedGame(): Promise<void>;
+  /** 成就：成就 id → 解鎖時間（epoch ms） */
+  getAchievements(): Promise<Record<string, number>>;
+  saveAchievements(unlocked: Record<string, number>): Promise<void>;
   clear(): Promise<void>;
 }

@@ -3,6 +3,7 @@ import type { MatchRecord, SavedGame, StorageProvider, StoredSettings } from './
 const RECORDS_KEY = 'hkk:records:v1';
 const SETTINGS_KEY = 'hkk:settings:v1';
 const GAME_KEY = 'hkk:game:v1';
+const ACHIEVEMENTS_KEY = 'hkk:achievements:v1';
 const MAX_RECORDS = 500;
 
 /** localStorage 實作（私密模式等失敗情況靜默降級） */
@@ -48,6 +49,15 @@ export class LocalStorageProvider implements StorageProvider {
     } catch { /* 忽略 */ }
   }
 
+  async getAchievements(): Promise<Record<string, number>> {
+    const parsed = this.read<Record<string, number>>(ACHIEVEMENTS_KEY);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  }
+
+  async saveAchievements(unlocked: Record<string, number>): Promise<void> {
+    this.write(ACHIEVEMENTS_KEY, unlocked);
+  }
+
   async clearMatches(): Promise<void> {
     try {
       this.storage?.removeItem(RECORDS_KEY);
@@ -59,6 +69,7 @@ export class LocalStorageProvider implements StorageProvider {
       this.storage?.removeItem(RECORDS_KEY);
       this.storage?.removeItem(SETTINGS_KEY);
       this.storage?.removeItem(GAME_KEY);
+      this.storage?.removeItem(ACHIEVEMENTS_KEY);
     } catch { /* 忽略 */ }
   }
 
