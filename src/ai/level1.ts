@@ -35,8 +35,9 @@ export function createLevel1(rng: Rng): AIStrategy {
       return [...options].sort((a, b) => rawValue(b) - rawValue(a))[0]!;
     },
 
-    async decideKoiKoi(): Promise<boolean> {
-      return false;
+    async decideKoiKoi(view: PlayerView): Promise<boolean> {
+      // 初級不懂風險評估，偶爾興起喊一下（手牌快沒了就不喊）
+      return view.hand.length >= 2 && rng() < 0.25;
     },
   };
 }

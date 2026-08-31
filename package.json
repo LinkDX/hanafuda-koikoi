@@ -1,7 +1,7 @@
 {
   "name": "hanafuda-koikoi",
   "private": true,
-  "version": "1.1.1",
+  "version": "1.2.0",
   "type": "module",
   "description": "日本花牌（花札）こいこい網頁遊戲 — 與三種等級 AI 對戰，支援 PWA 離線遊玩",
   "scripts": {

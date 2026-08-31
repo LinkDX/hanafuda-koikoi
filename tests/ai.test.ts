@@ -50,6 +50,28 @@ describe('AI 合法性（引擎會對非法動作丟錯）', () => {
   });
 });
 
+describe('level1 行為', () => {
+  it('偶爾喊こいこい（機率性，非永不喊也非常喊）', async () => {
+    const ai = createAI(1, createRng(42));
+    const view = makeView({ hand: [9, 47, 13], myCaptured: [1, 5] });
+    const ctx = { newYaku: [], currentPoints: 5 };
+    let declared = 0;
+    for (let i = 0; i < 200; i++) {
+      if (await ai.decideKoiKoi(view, ctx)) declared++;
+    }
+    expect(declared).toBeGreaterThan(10);
+    expect(declared).toBeLessThan(100);
+  });
+
+  it('手牌剩不到 2 張時不喊', async () => {
+    const ai = createAI(1, createRng(42));
+    const view = makeView({ hand: [9] });
+    for (let i = 0; i < 50; i++) {
+      expect(await ai.decideKoiKoi(view, { newYaku: [], currentPoints: 5 })).toBe(false);
+    }
+  });
+});
+
 describe('level2 行為', () => {
   it('對手赤短差一張時，不丟出關鍵短冊', async () => {
     const ai = createAI(2, createRng(1));
