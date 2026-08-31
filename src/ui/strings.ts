@@ -11,7 +11,7 @@ export const S = {
   hanamiZake: '花見酒',
   tsukimiZake: '月見酒',
   cardStyle: '卡面風格',
-  styleModern: '簡約',
+  styleModern: '圖鑑',
   styleTraditional: '傳統',
   rules: '規則說明',
   history: '對戰紀錄',
