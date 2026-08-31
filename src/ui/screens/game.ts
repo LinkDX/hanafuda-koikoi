@@ -351,8 +351,8 @@ export class GameScreen {
     }
     const fieldEl = el('div', 'field');
     if (v.field.length > 10) fieldEl.classList.add('field--dense');
-    const awaitingChoice = !this.animating &&
-      (s.phase === 'awaitHandMatchChoice' || s.phase === 'awaitDeckMatchChoice') && rs.turn === HUMAN;
+    const choicePhase = s.phase === 'awaitHandMatchChoice' || s.phase === 'awaitDeckMatchChoice';
+    const awaitingChoice = !this.animating && choicePhase && rs.turn === HUMAN;
     const choiceOptions = awaitingChoice && rs.pendingCard !== undefined
       ? rs.field.filter((f) => matches(f, rs.pendingCard!))
       : [];
@@ -366,9 +366,10 @@ export class GameScreen {
       this.attachDetail(cardEl, c);
       fieldEl.appendChild(cardEl);
     }
-    if (awaitingChoice && rs.pendingCard !== undefined) {
+    // 待配對的牌在選擇階段永遠可見（AI 回合也一樣，牌不會憑空消失）
+    if (choicePhase && rs.pendingCard !== undefined && !v.spotlight) {
       const pendingWrap = el('div', 'pending');
-      pendingWrap.appendChild(el('div', 'pending__hint', S.chooseMatch));
+      pendingWrap.appendChild(el('div', 'pending__hint', rs.turn === HUMAN ? S.chooseMatch : S.aiChoosing));
       pendingWrap.appendChild(renderCard(rs.pendingCard, style));
       table.appendChild(pendingWrap);
     }

@@ -23,6 +23,7 @@ export const S = {
   yourTurn: '輪到你出牌',
   aiThinking: 'AI 思考中…',
   chooseMatch: '選擇要配對的場札',
+  aiChoosing: 'AI 配對中…',
   koikoiTitle: '成役！',
   koikoiPrompt: '要「こいこい」繼續搏更高分，還是「勝負」立即結算？',
   koikoi: 'こいこい！',
