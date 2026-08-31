@@ -2,9 +2,10 @@ import type { AILevel } from '../../ai';
 import type { RuleConfig } from '../../core/rules';
 import { DEFAULT_RULES } from '../../core/rules';
 import { availableSources } from '../../art/sprites';
-import type { ArtSourceId, CardStyle } from '../../art/styleTypes';
+import type { CardStyle } from '../../art/styleTypes';
 import { renderCard } from '../components/cardEl';
 import { button, el } from '../components/dialogs';
+import { createDropdown } from '../components/dropdown';
 import { S } from '../strings';
 
 export interface MenuResult {
@@ -91,22 +92,22 @@ export function renderMenu(
     { value: 3, label: S.aiLevels[3]! },
   ] as const, aiLevel, (v) => { aiLevel = v as AILevel; }));
 
-  // 卡面畫風＋圖鑑框開關
+  // 卡面畫風（自製下拉選單）＋圖鑑框開關
   const styleChanged = (): void => {
     renderHero();
     onStyleChange?.({ ...style });
   };
-  root.appendChild(optionGroup(
-    S.cardStyle,
+  const styleGroup = el('div', 'menu__group');
+  styleGroup.appendChild(el('label', 'menu__label', S.cardStyle));
+  const styleRow = el('div', 'menu__options');
+  styleRow.appendChild(createDropdown(
     availableSources().map((id) => ({ value: id, label: S.sourceNames[id] ?? id })),
     style.source,
-    (v) => { style.source = v as ArtSourceId; styleChanged(); },
+    (v) => { style.source = v; styleChanged(); },
   ));
-  const frameGroup = el('div', 'menu__group');
-  const frameRow = el('div', 'menu__options');
-  frameRow.appendChild(toggle(S.frameToggle, style.framed, (v) => { style.framed = v; styleChanged(); }));
-  frameGroup.appendChild(frameRow);
-  root.appendChild(frameGroup);
+  styleRow.appendChild(toggle(S.frameToggle, style.framed, (v) => { style.framed = v; styleChanged(); }));
+  styleGroup.appendChild(styleRow);
+  root.appendChild(styleGroup);
 
   const variants = el('div', 'menu__group');
   variants.appendChild(el('label', 'menu__label', S.variants));

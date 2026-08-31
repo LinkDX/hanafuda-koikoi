@@ -96,7 +96,8 @@ button { font-family: inherit; cursor: pointer; }
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45), inset 0 0 0 4px rgba(217, 164, 65, 0.08);
 }
 .menu__title {
-  font-size: 42px;
+  font-size: clamp(28px, 9.5vw, 42px);
+  white-space: nowrap;
   letter-spacing: 8px;
   color: var(--gold);
   font-family: 'Noto Serif TC', 'Yu Mincho', serif;
@@ -112,11 +113,62 @@ button { font-family: inherit; cursor: pointer; }
 .menu__group { display: flex; flex-direction: column; gap: 8px; }
 .menu__label { font-size: 13px; opacity: 0.75; text-align: left; letter-spacing: 2px; }
 .menu__options { display: flex; gap: 8px; flex-wrap: wrap; }
-.menu__options .btn { flex: 1; min-width: 72px; }
+.menu__options .btn { flex: 1 1 auto; min-width: max-content; white-space: nowrap; }
 .btn--start { font-size: 18px; padding: 14px; margin-top: 8px; letter-spacing: 6px; }
 .menu__links { display: flex; gap: 10px; }
 .menu__links .btn { flex: 1; }
 .menu__version { font-size: 11px; opacity: 0.45; margin-top: -6px; letter-spacing: 1px; }
+
+/* ---------- 自製下拉選單 ---------- */
+.dropdown { position: relative; flex: 1 1 auto; min-width: max-content; }
+.dropdown__trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  white-space: nowrap;
+}
+.dropdown__caret { opacity: 0.7; font-size: 12px; transition: transform 0.15s; }
+.dropdown--open .dropdown__caret { transform: rotate(180deg); }
+.dropdown__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  min-width: max-content;
+  background: linear-gradient(180deg, #2e211a, var(--lacquer));
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.55), inset 0 0 0 3px rgba(217, 164, 65, 0.1);
+  padding: 6px;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 50;
+}
+.dropdown--open .dropdown__panel { display: flex; animation: dropdown-in 0.16s ease-out; }
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dropdown__option {
+  border: none;
+  background: none;
+  color: var(--paper);
+  font-size: 15px;
+  text-align: left;
+  padding: 9px 14px;
+  border-radius: 7px;
+  white-space: nowrap;
+  min-height: 40px;
+}
+.dropdown__option:hover { background: rgba(217, 164, 65, 0.18); }
+.dropdown__option--active {
+  background: linear-gradient(180deg, #e5b654, #c99427);
+  color: #33250c;
+  font-weight: 700;
+}
 
 /* ---------- 對話框 ---------- */
 .dialog-overlay {

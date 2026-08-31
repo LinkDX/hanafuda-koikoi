@@ -175,23 +175,39 @@
   .spotlight, .banner { animation: none; }
 }
 
-/* 吃牌區：固定高度單列，過寬時內部橫向捲動（版面不變形） */
+/* 吃牌區：固定高度單列，牌以彈性扇疊自動壓縮 —
+   空間夠時攤開、牌多時加深重疊，永遠全部可見、不出現卷軸 */
 .captured {
   display: flex;
   gap: 10px;
   flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: hidden;
   height: calc(var(--card-w) * 0.55 * 1.6 + 20px);
-  scrollbar-width: thin;
+  min-width: 0;
 }
-.captured__group { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
-.captured__label { font-size: 11px; opacity: 0.75; letter-spacing: 1px; }
-.captured__cards { display: flex; }
-.captured .card { width: calc(var(--card-w) * 0.55); }
-.captured__cards .card:not(:first-child) { margin-left: calc(var(--card-w) * -0.28); }
-/* 同組超過 8 張時加大重疊，壓縮寬度 */
-.captured__cards--dense .card:not(:first-child) { margin-left: calc(var(--card-w) * -0.44); }
+.captured__group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+.captured__label { font-size: 11px; opacity: 0.75; letter-spacing: 1px; white-space: nowrap; }
+.captured__cards { display: flex; min-width: 0; }
+.cap {
+  position: relative;
+  width: calc(var(--card-w) * 0.55);
+  min-width: 9px;
+  height: calc(var(--card-w) * 0.55 * 1.6);
+  flex: 0 1 auto;
+}
+.cap:last-child { min-width: calc(var(--card-w) * 0.55); flex-shrink: 0; } /* 最新一張完整露出 */
+.cap .card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--card-w) * 0.55);
+}
 
 /* 狀態列小徽章（親／こいこい），不再疊在牌上 */
 .chip {

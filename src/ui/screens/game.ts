@@ -432,8 +432,12 @@ export class GameScreen {
       if (cards.length === 0) continue;
       const group = el('div', 'captured__group');
       group.appendChild(el('span', 'captured__label', `${S.captured[type]} ${cards.length}`));
-      const row = el('div', `captured__cards${cards.length > 8 ? ' captured__cards--dense' : ''}`);
-      for (const c of cards) row.appendChild(renderCard(c, this.config.style));
+      const row = el('div', 'captured__cards');
+      for (const c of cards) {
+        const cap = el('span', 'cap');
+        cap.appendChild(renderCard(c, this.config.style));
+        row.appendChild(cap);
+      }
       group.appendChild(row);
       wrap.appendChild(group);
     }

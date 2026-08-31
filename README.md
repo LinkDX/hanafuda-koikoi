@@ -49,4 +49,11 @@ Push 到 `main` 後由 GitHub Actions 自動測試、建置並部署到 GitHub P
 
 ## License
 
-MIT
+- 程式碼與自繪（原創）卡面：MIT
+- 「花札・黑」「花札・紅」「花鬪」「花鬪・和風」四套卡面圖檔（`public/wiki/`）取自 Wikimedia Commons，授權 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant)，個別作者見各檔案頁：
+  - [SVG Hanafuda with traditional colors (black border)](https://commons.wikimedia.org/wiki/Category:SVG_Hanafuda_with_traditional_colors_(black_border))
+  - [SVG Hanafuda with traditional colors (red border)](https://commons.wikimedia.org/wiki/Category:SVG_Hanafuda_with_traditional_colors_(red_border))
+  - [SVG Hwatu](https://commons.wikimedia.org/wiki/Category:SVG_Hwatu)
+  - [SVG Hwatu (with Japanese-style artwork)](https://commons.wikimedia.org/wiki/Category:SVG_Hwatu_(with_Japanese-style_artwork))
+
+  圖檔以原樣使用（重新命名為卡牌編號），衍生使用需依 CC BY-SA 4.0 條款。下載腳本：`scripts/fetch-wiki-cards.ts`。

@@ -23,19 +23,15 @@ export const WASHI_MONTHS: readonly (readonly [string, string, string, string])[
 ];
 
 /**
- * Wikimedia 圖集（CC BY-SA 4.0）：每月一個 1600×600 的檔案、一列四張 400×600。
- * cardOrder[月-1] 將「檔案內第 i 格」映射到本專案的 slot（cards.ts 順序）。
- * 佔位：實際順序待逐檔目視核對後填入。
+ * Wikimedia 圖集（CC BY-SA 4.0，來源與作者見 README 授權章節）。
+ * 檔案由 scripts/fetch-wiki-cards.ts 下載為 public/wiki/<set>/<cardId>.svg。
  */
-export interface WikiSourceConfig {
-  /** public/ 下的資料夾名 */
-  dir: string;
-  /** 每月：strip 內位置 → 專案 slot 的映射（長度 4，值為 0..3 = 檔案內格位索引） */
-  slotToStripIndex: readonly (readonly [number, number, number, number])[];
-}
-
-/** 圖集檔案下載並逐檔核對格位映射後才註冊（未註冊的來源不會出現在選單） */
-export const WIKI_SOURCES: Partial<Record<ArtSourceId, WikiSourceConfig>> = {};
+export const WIKI_SOURCES: Partial<Record<ArtSourceId, { dir: string }>> = {
+  'hanafuda-black': { dir: 'hanafuda-black' },
+  'hanafuda-red': { dir: 'hanafuda-red' },
+  'hwatu': { dir: 'hwatu' },
+  'hwatu-jp': { dir: 'hwatu-jp' },
+};
 
 /** 自繪原創（washi）base sprite */
 export function buildWashiSprite(): SVGSVGElement {
@@ -54,7 +50,7 @@ export function buildWashiSprite(): SVGSVGElement {
   return svg;
 }
 
-/** Wikimedia 圖集 base sprite：以 <image> 裁切引用外部檔案（避免 id 衝突） */
+/** Wikimedia 圖集 base sprite：每張卡以 <image> 引用獨立檔案（隔離、無 id 衝突） */
 export function buildWikiSprite(source: ArtSourceId): SVGSVGElement {
   const config = WIKI_SOURCES[source];
   if (!config) throw new Error(`未設定的圖集來源: ${source}`);
@@ -62,16 +58,13 @@ export function buildWikiSprite(source: ArtSourceId): SVGSVGElement {
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('aria-hidden', 'true');
   svg.style.display = 'none';
-  for (let month = 1; month <= 12; month++) {
-    const order = config.slotToStripIndex[month - 1]!;
-    for (let slot = 0; slot < 4; slot++) {
-      const stripIndex = order[slot]!;
-      const symbol = document.createElementNS(SVG_NS, 'symbol');
-      symbol.id = symbolId(source, (month - 1) * 4 + slot);
-      symbol.setAttribute('viewBox', '0 0 400 600');
-      symbol.innerHTML = `<image x="${-stripIndex * 400}" y="0" width="1600" height="600" href="${base}${config.dir}/${config.dir}-${String(month).padStart(2, '0')}.svg"/>`;
-      svg.appendChild(symbol);
-    }
+  for (const card of CARDS) {
+    const symbol = document.createElementNS(SVG_NS, 'symbol');
+    symbol.id = symbolId(source, card.id);
+    symbol.setAttribute('viewBox', '0 0 200 320');
+    symbol.innerHTML =
+      `<image width="200" height="320" preserveAspectRatio="xMidYMid meet" href="${base}wiki/${config.dir}/${card.id}.svg"/>`;
+    svg.appendChild(symbol);
   }
   return svg;
 }
