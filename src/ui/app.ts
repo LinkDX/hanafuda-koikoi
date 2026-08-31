@@ -55,7 +55,12 @@ export function initApp(container: HTMLElement): void {
         void storage.saveSettings(toStored(result));
         void storage.clearSavedGame(); // 開新局：捨棄舊進度
         startGame();
-      }, showHistory, showRules, saved ? () => resumeGame(saved) : undefined, showAchievements);
+      }, showHistory, showRules, saved ? () => resumeGame(saved) : undefined, showAchievements,
+      (style) => {
+        // 切換風格立即生效並保存（規則頁/成就頁/hero 都吃當下設定）
+        settings = { ...settings, style };
+        void storage.saveSettings(toStored(settings));
+      });
     });
   };
 
@@ -70,7 +75,7 @@ export function initApp(container: HTMLElement): void {
     game = new GameScreen(container, {
       rules: saved.state.rules,
       aiLevel: saved.aiLevel,
-      style: saved.style,
+      style: settings.style, // 續玩吃「目前」選的卡面風格，切換立即生效
       storage,
       resume: saved,
       onExit: showMenu,

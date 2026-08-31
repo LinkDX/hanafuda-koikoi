@@ -20,14 +20,18 @@ export function renderMenu(
   onRules?: () => void,
   onContinue?: () => void,
   onAchievements?: () => void,
+  onStyleChange?: (style: CardStyleId) => void,
 ): void {
   const root = el('div', 'menu');
   root.appendChild(el('h1', 'menu__title', S.appTitle));
   root.appendChild(el('p', 'menu__subtitle', S.subtitle));
 
-  // 招牌光牌扇形展示
+  // 招牌光牌扇形展示（切換風格立即反映）
   const hero = el('div', 'menu__hero');
-  for (const id of [0, 8, 28, 44]) hero.appendChild(renderCard(id, defaults.style));
+  const renderHero = (): void => {
+    hero.replaceChildren();
+    for (const id of [0, 8, 28, 44]) hero.appendChild(renderCard(id, style));
+  };
   root.appendChild(hero);
 
   let rounds = defaults.rules.totalRounds;
@@ -35,6 +39,7 @@ export function renderMenu(
   let style = defaults.style;
   let hanami = defaults.rules.hanamiZake;
   let tsukimi = defaults.rules.tsukimiZake;
+  renderHero();
 
   const optionGroup = <T extends string | number>(
     label: string,
@@ -78,7 +83,11 @@ export function renderMenu(
   root.appendChild(optionGroup(S.cardStyle, [
     { value: 'traditional', label: S.styleTraditional },
     { value: 'modern', label: S.styleModern },
-  ] as const, style, (v) => { style = v as CardStyleId; }));
+  ] as const, style, (v) => {
+    style = v as CardStyleId;
+    renderHero();
+    onStyleChange?.(style);
+  }));
 
   const variants = el('div', 'menu__group');
   variants.appendChild(el('label', 'menu__label', S.variants));
