@@ -17,6 +17,7 @@ import { renderCard } from '../components/cardEl';
 import { showCheatsheet } from '../components/cheatsheet';
 import { button, el, showDialog } from '../components/dialogs';
 import type { DialogHandle } from '../components/dialogs';
+import { showYakuEffect } from '../components/yakuEffect';
 import { renderYakuPanel } from '../components/yakuPanel';
 import { S } from '../strings';
 
@@ -180,7 +181,12 @@ export class GameScreen {
           this.render();
           break;
         case 'yakuFormed':
-          await this.banner(`成役！${e.newYaku.map((y) => y.nameJa).join('・')}`, 900);
+          await showYakuEffect(
+            e.newYaku,
+            this.state.roundState.captured[e.player],
+            this.state.rules,
+            this.config.style,
+          );
           break;
         case 'koikoiDeclared':
           await this.banner(e.player === HUMAN ? 'こいこい！' : `AI：こいこい！`, 900);

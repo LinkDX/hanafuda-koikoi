@@ -1,0 +1,153 @@
+/* ---------- 成役特效 ---------- */
+.yaku-fx {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: opacity 0.28s ease-out;
+}
+.yaku-fx--out { opacity: 0; }
+
+/* 第三級：暗幕＋開場閃光＋旭光射線 */
+.yaku-fx--t3 { background: rgba(8, 14, 10, 0.55); }
+.yaku-fx__flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, rgba(255, 240, 200, 0.9), transparent 60%);
+  animation: fx-flash 0.5s ease-out forwards;
+}
+@keyframes fx-flash {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.yaku-fx__rays {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 160vmax;
+  height: 160vmax;
+  transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(
+    rgba(217, 164, 65, 0.22) 0deg 9deg,
+    transparent 9deg 24deg
+  );
+  -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  animation: fx-rays 14s linear infinite;
+}
+@keyframes fx-rays {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 舞台：牌扇＋標題 */
+.yaku-fx__stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.yaku-fx__cards { display: flex; }
+.yaku-fx__cardwrap {
+  display: inline-block;
+  transform: rotate(var(--rot)) translateY(var(--lift));
+  margin: 0 calc(var(--card-w) * -0.12);
+  animation: fx-card-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  animation-delay: calc(var(--i) * 0.09s);
+  position: relative;
+  overflow: hidden;
+  border-radius: 8%;
+}
+.yaku-fx__cardwrap .card {
+  width: clamp(56px, 14vw, 96px);
+}
+.yaku-fx__cardwrap .card svg { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55); }
+@keyframes fx-card-in {
+  from { transform: rotate(var(--rot)) translateY(60px) scale(0.4); opacity: 0; }
+  to { transform: rotate(var(--rot)) translateY(var(--lift)) scale(1); opacity: 1; }
+}
+/* 第三級的掃光 */
+.yaku-fx--t3 .yaku-fx__cardwrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 250, 220, 0.75) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: fx-shine 1s ease-out forwards;
+  animation-delay: calc(var(--i) * 0.09s + 0.55s);
+}
+@keyframes fx-shine {
+  to { transform: translateX(120%); }
+}
+
+.yaku-fx__title {
+  font-family: 'Noto Serif TC', 'Yu Mincho', serif;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 6px;
+  font-size: clamp(26px, 7vw, 46px);
+  text-shadow: 0 0 18px rgba(217, 164, 65, 0.6), 0 2px 6px rgba(0, 0, 0, 0.8);
+  animation: fx-title 0.55s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  white-space: nowrap;
+}
+.yaku-fx--t3 .yaku-fx__title {
+  font-size: clamp(34px, 9vw, 62px);
+  color: #f2d64b;
+  text-shadow: 0 0 26px rgba(242, 214, 75, 0.85), 0 0 8px rgba(200, 54, 43, 0.6), 0 3px 8px rgba(0, 0, 0, 0.9);
+}
+.yaku-fx__points {
+  font-weight: 700;
+  color: var(--paper);
+  font-size: clamp(15px, 4vw, 22px);
+  letter-spacing: 3px;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8);
+  animation: fx-title 0.55s 0.15s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+@keyframes fx-title {
+  from { transform: scale(0.3); opacity: 0; }
+  60% { transform: scale(1.12); }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* 第一級：只有置中標題（沿用橫幅感） */
+.yaku-fx--t1 .yaku-fx__stage {
+  background: linear-gradient(180deg, rgba(36, 26, 21, 0.95), rgba(20, 14, 11, 0.95));
+  border: 2px solid var(--gold);
+  border-radius: 14px;
+  padding: 14px 30px;
+  box-shadow: 0 12px 44px rgba(0, 0, 0, 0.6);
+}
+.yaku-fx--t1 .yaku-fx__title { font-size: clamp(20px, 5vw, 30px); letter-spacing: 4px; }
+.yaku-fx--t1 .yaku-fx__points { font-size: 14px; }
+
+/* 金粉粒子 */
+.yaku-fx__p {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe9a8, #d9a441);
+  box-shadow: 0 0 8px rgba(242, 214, 75, 0.9);
+  animation: fx-particle 1.3s ease-out both;
+  animation-delay: var(--delay);
+}
+.yaku-fx__p--red { background: radial-gradient(circle, #ffb3a8, #c8362b); box-shadow: 0 0 8px rgba(200, 54, 43, 0.9); }
+@keyframes fx-particle {
+  from { transform: translate(0, 0) scale(0.4); opacity: 0; }
+  15% { opacity: 1; }
+  to { transform: translate(var(--dx), var(--dy)) scale(1); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* 入場動畫直接停用（元素以最終狀態顯示），避免 fill 卡在隱藏影格 */
+  .yaku-fx__rays, .yaku-fx__flash, .yaku-fx__cardwrap::after,
+  .yaku-fx__cardwrap, .yaku-fx__title, .yaku-fx__points { animation: none; }
+  .yaku-fx__rays { opacity: 0.5; }
+  .yaku-fx__flash { opacity: 0; }
+}
