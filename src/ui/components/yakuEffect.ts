@@ -3,7 +3,7 @@ import type { CardId, CardType } from '../../core/cards';
 import type { RuleConfig } from '../../core/rules';
 import { yakuStatus } from '../../core/yaku';
 import type { YakuId, YakuStatus } from '../../core/yaku';
-import type { CardStyleId } from '../../art/styleTypes';
+import type { CardStyle } from '../../art/styleTypes';
 import { renderCard } from './cardEl';
 import { el } from './dialogs';
 
@@ -39,7 +39,7 @@ export async function showYakuEffect(
   newYaku: readonly YakuStatus[],
   captured: readonly CardId[],
   rules: RuleConfig,
-  style: CardStyleId,
+  style: CardStyle,
 ): Promise<void> {
   if (newYaku.length === 0) return;
   const tier = tierOf(newYaku);

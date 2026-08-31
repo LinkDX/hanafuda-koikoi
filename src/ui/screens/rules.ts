@@ -2,7 +2,7 @@ import { CARDS } from '../../core/cards';
 import type { Month } from '../../core/cards';
 import { DEFAULT_RULES } from '../../core/rules';
 import { yakuStatus } from '../../core/yaku';
-import type { CardStyleId } from '../../art/styleTypes';
+import type { CardStyle } from '../../art/styleTypes';
 import { renderCard } from '../components/cardEl';
 import { showCardDetail } from '../components/cardDetail';
 import { button, el } from '../components/dialogs';
@@ -25,7 +25,7 @@ const FLOW_STEPS: readonly [string, string][] = [
 
 export function renderRules(
   container: HTMLElement,
-  style: CardStyleId,
+  style: CardStyle,
   onBack: () => void,
 ): void {
   const root = el('div', 'rules');

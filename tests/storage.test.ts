@@ -46,7 +46,7 @@ describe('LocalStorageProvider', () => {
   it('設定存取往返', async () => {
     const p = new LocalStorageProvider(fakeStorage());
     expect(await p.getSettings()).toBeNull();
-    await p.saveSettings({ aiLevel: 3, totalRounds: 6, hanamiZake: false, tsukimiZake: true, style: 'traditional' });
+    await p.saveSettings({ aiLevel: 3, totalRounds: 6, hanamiZake: false, tsukimiZake: true, artSource: 'washi', framed: false });
     expect((await p.getSettings())?.aiLevel).toBe(3);
   });
 
@@ -71,7 +71,7 @@ describe('LocalStorageProvider', () => {
       schemaVersion: 1 as const,
       timestamp: 123,
       aiLevel: 2 as const,
-      style: 'traditional' as const,
+      style: { source: 'washi', framed: false } as const,
       roundLog: [],
       state: { round: 1 } as never,
     };

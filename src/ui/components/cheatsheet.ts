@@ -1,7 +1,7 @@
 import type { RuleConfig } from '../../core/rules';
 import { yakuStatus } from '../../core/yaku';
 import { cardOf } from '../../core/cards';
-import type { CardStyleId } from '../../art/styleTypes';
+import type { CardStyle } from '../../art/styleTypes';
 import { renderCard } from './cardEl';
 import { button, el, showDialog } from './dialogs';
 import { S } from '../strings';
@@ -13,7 +13,7 @@ const COUNT_DESC: Partial<Record<string, string>> = {
 };
 
 /** 役型速查表 overlay */
-export function showCheatsheet(rules: RuleConfig, style: CardStyleId): void {
+export function showCheatsheet(rules: RuleConfig, style: CardStyle): void {
   const content = el('div', 'cheatsheet');
   content.appendChild(el('h2', 'dialog__title', S.cheatsheet));
   for (const y of yakuStatus([], rules)) {

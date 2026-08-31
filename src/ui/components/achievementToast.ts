@@ -1,5 +1,5 @@
 import type { AchievementDef } from '../../achievements/defs';
-import type { CardStyleId } from '../../art/styleTypes';
+import type { CardStyle } from '../../art/styleTypes';
 import { renderCard } from './cardEl';
 import { el } from './dialogs';
 
@@ -8,7 +8,7 @@ const wait = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms)
 /** 成就解鎖 toast：右上角逐一滑入 */
 export async function showAchievementToasts(
   defs: readonly AchievementDef[],
-  style: CardStyleId,
+  style: CardStyle,
 ): Promise<void> {
   if (defs.length === 0) return;
   let host = document.querySelector<HTMLElement>('.ach-toasts');

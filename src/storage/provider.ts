@@ -1,6 +1,6 @@
 import type { GameState, Player } from '../core/state';
 import type { YakuId } from '../core/yaku';
-import type { CardStyleId } from '../art/styleTypes';
+import type { ArtSourceId, CardStyle } from '../art/styleTypes';
 
 export interface MatchRecordRound {
   winner: Player | null;
@@ -31,7 +31,9 @@ export interface StoredSettings {
   totalRounds: 3 | 6 | 12;
   hanamiZake: boolean;
   tsukimiZake: boolean;
-  style: CardStyleId;
+  /** 畫風來源（舊版欄位 style: 'traditional'|'modern' 於載入時遷移） */
+  artSource: ArtSourceId;
+  framed: boolean;
 }
 
 /** 進行中的對局存檔（refresh／退出後可續玩） */
@@ -39,7 +41,7 @@ export interface SavedGame {
   schemaVersion: 1;
   timestamp: number;
   aiLevel: 1 | 2 | 3;
-  style: CardStyleId;
+  style: CardStyle;
   state: GameState;
   roundLog: MatchRecordRound[];
 }

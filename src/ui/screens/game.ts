@@ -9,7 +9,7 @@ import { computeRoundScore } from '../../core/scoring';
 import type { Action, GameEvent, GameState, Player } from '../../core/state';
 import { detectYaku } from '../../core/yaku';
 import { toPlayerView } from '../../core/view';
-import type { CardStyleId } from '../../art/styleTypes';
+import type { CardStyle } from '../../art/styleTypes';
 import type { MatchRecord, MatchRecordRound, SavedGame, StorageProvider } from '../../storage/provider';
 import { withFlip } from '../animate';
 import { showCardDetail } from '../components/cardDetail';
@@ -26,7 +26,7 @@ import { S } from '../strings';
 export interface GameConfig {
   rules: RuleConfig;
   aiLevel: AILevel;
-  style: CardStyleId;
+  style: CardStyle;
   storage: StorageProvider;
   seed?: number;
   /** 續玩：從存檔還原對局 */

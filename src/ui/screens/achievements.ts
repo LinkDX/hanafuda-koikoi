@@ -1,6 +1,6 @@
 import { ACHIEVEMENTS, computeAchievements } from '../../achievements/defs';
 import type { StorageProvider } from '../../storage/provider';
-import type { CardStyleId } from '../../art/styleTypes';
+import type { CardStyle } from '../../art/styleTypes';
 import { renderCard } from '../components/cardEl';
 import { button, el } from '../components/dialogs';
 import { S } from '../strings';
@@ -9,7 +9,7 @@ import { S } from '../strings';
 export async function renderAchievements(
   container: HTMLElement,
   storage: StorageProvider,
-  style: CardStyleId,
+  style: CardStyle,
   onBack: () => void,
 ): Promise<void> {
   // 讀取已保存的解鎖，並從歷史紀錄回填（舊戰績也算數）

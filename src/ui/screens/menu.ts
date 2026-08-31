@@ -1,7 +1,8 @@
 import type { AILevel } from '../../ai';
 import type { RuleConfig } from '../../core/rules';
 import { DEFAULT_RULES } from '../../core/rules';
-import type { CardStyleId } from '../../art/styleTypes';
+import { availableSources } from '../../art/sprites';
+import type { ArtSourceId, CardStyle } from '../../art/styleTypes';
 import { renderCard } from '../components/cardEl';
 import { button, el } from '../components/dialogs';
 import { S } from '../strings';
@@ -9,7 +10,7 @@ import { S } from '../strings';
 export interface MenuResult {
   rules: RuleConfig;
   aiLevel: AILevel;
-  style: CardStyleId;
+  style: CardStyle;
 }
 
 export function renderMenu(
@@ -20,11 +21,17 @@ export function renderMenu(
   onRules?: () => void,
   onContinue?: () => void,
   onAchievements?: () => void,
-  onStyleChange?: (style: CardStyleId) => void,
+  onStyleChange?: (style: CardStyle) => void,
 ): void {
   const root = el('div', 'menu');
   root.appendChild(el('h1', 'menu__title', S.appTitle));
   root.appendChild(el('p', 'menu__subtitle', S.subtitle));
+
+  let rounds = defaults.rules.totalRounds;
+  let aiLevel = defaults.aiLevel;
+  let style: CardStyle = { ...defaults.style };
+  let hanami = defaults.rules.hanamiZake;
+  let tsukimi = defaults.rules.tsukimiZake;
 
   // 招牌光牌扇形展示（切換風格立即反映）
   const hero = el('div', 'menu__hero');
@@ -32,14 +39,8 @@ export function renderMenu(
     hero.replaceChildren();
     for (const id of [0, 8, 28, 44]) hero.appendChild(renderCard(id, style));
   };
-  root.appendChild(hero);
-
-  let rounds = defaults.rules.totalRounds;
-  let aiLevel = defaults.aiLevel;
-  let style = defaults.style;
-  let hanami = defaults.rules.hanamiZake;
-  let tsukimi = defaults.rules.tsukimiZake;
   renderHero();
+  root.appendChild(hero);
 
   const optionGroup = <T extends string | number>(
     label: string,
@@ -68,6 +69,16 @@ export function renderMenu(
     return group;
   };
 
+  const toggle = (label: string, initial: boolean, onChange: (v: boolean) => void): HTMLButtonElement => {
+    const b = button(label, 'btn btn--option', () => {
+      const active = !b.classList.contains('btn--active');
+      b.classList.toggle('btn--active', active);
+      onChange(active);
+    });
+    if (initial) b.classList.add('btn--active');
+    return b;
+  };
+
   root.appendChild(optionGroup(S.rounds, [
     { value: 3, label: `3 ${S.roundsUnit}` },
     { value: 6, label: `6 ${S.roundsUnit}` },
@@ -80,27 +91,26 @@ export function renderMenu(
     { value: 3, label: S.aiLevels[3]! },
   ] as const, aiLevel, (v) => { aiLevel = v as AILevel; }));
 
-  root.appendChild(optionGroup(S.cardStyle, [
-    { value: 'traditional', label: S.styleTraditional },
-    { value: 'modern', label: S.styleModern },
-  ] as const, style, (v) => {
-    style = v as CardStyleId;
+  // 卡面畫風＋圖鑑框開關
+  const styleChanged = (): void => {
     renderHero();
-    onStyleChange?.(style);
-  }));
+    onStyleChange?.({ ...style });
+  };
+  root.appendChild(optionGroup(
+    S.cardStyle,
+    availableSources().map((id) => ({ value: id, label: S.sourceNames[id] ?? id })),
+    style.source,
+    (v) => { style.source = v as ArtSourceId; styleChanged(); },
+  ));
+  const frameGroup = el('div', 'menu__group');
+  const frameRow = el('div', 'menu__options');
+  frameRow.appendChild(toggle(S.frameToggle, style.framed, (v) => { style.framed = v; styleChanged(); }));
+  frameGroup.appendChild(frameRow);
+  root.appendChild(frameGroup);
 
   const variants = el('div', 'menu__group');
   variants.appendChild(el('label', 'menu__label', S.variants));
   const variantRow = el('div', 'menu__options');
-  const toggle = (label: string, initial: boolean, onChange: (v: boolean) => void) => {
-    const b = button(label, 'btn btn--option', () => {
-      const active = !b.classList.contains('btn--active');
-      b.classList.toggle('btn--active', active);
-      onChange(active);
-    });
-    if (initial) b.classList.add('btn--active');
-    return b;
-  };
   variantRow.appendChild(toggle(S.hanamiZake, hanami, (v) => { hanami = v; }));
   variantRow.appendChild(toggle(S.tsukimiZake, tsukimi, (v) => { tsukimi = v; }));
   variants.appendChild(variantRow);
@@ -114,7 +124,7 @@ export function renderMenu(
     onStart({
       rules: { ...DEFAULT_RULES, totalRounds: rounds, hanamiZake: hanami, tsukimiZake: tsukimi },
       aiLevel,
-      style,
+      style: { ...style },
     });
   }));
 

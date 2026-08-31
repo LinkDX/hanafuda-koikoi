@@ -2,7 +2,7 @@ import { cardOf } from '../../core/cards';
 import type { CardId } from '../../core/cards';
 import type { RuleConfig } from '../../core/rules';
 import { yakuStatus } from '../../core/yaku';
-import type { CardStyleId } from '../../art/styleTypes';
+import type { CardStyle } from '../../art/styleTypes';
 import { renderCard } from './cardEl';
 import { button, el, showDialog } from './dialogs';
 import { S } from '../strings';
@@ -15,7 +15,7 @@ const TYPE_NAME: Record<string, string> = {
 };
 
 /** 點牌看詳情：大圖、名稱、種類、相關役 */
-export function showCardDetail(card: CardId, rules: RuleConfig, style: CardStyleId): void {
+export function showCardDetail(card: CardId, rules: RuleConfig, style: CardStyle): void {
   const def = cardOf(card);
   const content = el('div', 'card-detail');
   const big = renderCard(card, style);
