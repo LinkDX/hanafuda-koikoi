@@ -62,6 +62,23 @@ function visualFromState(state: GameState): VisualState {
 const reducedMotion = (): boolean =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/** 手指一碰就反應（不等 touchend 的 click），鍵盤觸發仍走 click */
+function onTap(el: HTMLElement, handler: () => void): void {
+  let pointerHandled = false;
+  el.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    pointerHandled = true;
+    handler();
+  });
+  el.addEventListener('click', () => {
+    if (pointerHandled) {
+      pointerHandled = false;
+      return;
+    }
+    handler();
+  });
+}
+
 /**
  * 事件重播的節奏停頓是「資訊」而非裝飾 —
  * 減少動態偏好下仍保留停頓（縮短），只由 CSS/FLIP 停用裝飾動畫。
@@ -278,8 +295,9 @@ export class GameScreen {
 
   // ---------- 渲染 ----------
 
-  private render(): void {
-    withFlip(document.body, () => this.renderInner());
+  private render(flip = true): void {
+    if (flip) withFlip(document.body, () => this.renderInner());
+    else this.renderInner(); // 純選取高亮等輕量更新：跳過 FLIP 量測
   }
 
   /** 掛上「看牌詳情」手勢（右鍵／長按） */
@@ -361,7 +379,7 @@ export class GameScreen {
       if (this.selected !== null && matches(c, this.selected)) cardEl.classList.add('card--matchable');
       if (choiceOptions.includes(c)) {
         cardEl.classList.add('card--choice');
-        cardEl.addEventListener('click', () => this.dispatch({ type: 'chooseMatch', fieldCard: c }));
+        onTap(cardEl, () => this.dispatch({ type: 'chooseMatch', fieldCard: c }));
       }
       this.attachDetail(cardEl, c);
       fieldEl.appendChild(cardEl);
@@ -396,7 +414,7 @@ export class GameScreen {
       const cardEl = renderCard(c, style, { interactive: myTurn });
       if (this.selected === c) cardEl.classList.add('card--selected');
       if (myTurn) {
-        cardEl.addEventListener('click', () => this.onHandCardClick(c));
+        onTap(cardEl, () => this.onHandCardClick(c));
       }
       this.attachDetail(cardEl, c);
       myHand.appendChild(cardEl);
@@ -450,11 +468,8 @@ export class GameScreen {
       this.dispatch({ type: 'playHandCard', card });
       return;
     }
-    const hasMatch = this.state.roundState.field.some((f) => matches(f, card));
     this.selected = card;
-    this.render();
-    // 無配對的牌：再點一下丟出；有配對：高亮場札供確認
-    void hasMatch;
+    this.render(false); // 選取高亮：立即重繪、不做 FLIP
   }
 
   // ---------- 對話框 ----------

@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [1.6.3] - 2026-08-31
+
+### Fixed
+
+- 手機點牌到彈起有明顯延遲：改用 pointerdown（手指一碰即反應，不等放開）、選取高亮跳過全盤 FLIP 重繪、加 touch-action: manipulation 消除瀏覽器點擊延遲、彈起過渡縮短
+
 ## [1.6.2] - 2026-08-31
 
 ### Added

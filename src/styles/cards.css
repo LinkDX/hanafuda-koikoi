@@ -8,7 +8,12 @@
   position: relative;
   flex-shrink: 0;
   transition: transform 0.15s, box-shadow 0.15s;
+  touch-action: manipulation; /* 消除行動瀏覽器點擊延遲與雙擊縮放 */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
+.card--selected { transition-duration: 0.08s; } /* 選取彈起更即時 */
 .card svg {
   width: 100%;
   height: 100%;
