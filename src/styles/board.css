@@ -24,6 +24,7 @@
   align-items: center;
   gap: 8px;
   font-size: 14px;
+  white-space: nowrap; /* 狀態列永遠單行，不讓「第 1/12 月」等字樣中途折行 */
   background: linear-gradient(180deg, #2e211a, var(--lacquer));
   border: 1px solid rgba(217, 164, 65, 0.45);
   border-radius: 10px;
@@ -189,7 +190,9 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 0;
+  /* 覆蓋 min-width:auto 以啟用彈性收縮，但下限保住最寬標籤（如「短冊 12」），
+     擁擠時標籤才不會溢出疊到隔壁組的字上 */
+  min-width: 48px;
   flex: 0 1 auto;
 }
 .captured__label { font-size: 11px; opacity: 0.75; letter-spacing: 1px; white-space: nowrap; }
@@ -460,6 +463,20 @@
 .rules__month-title { font-size: 15px; margin-bottom: 6px; opacity: 0.9; font-family: 'Noto Serif TC', serif; }
 .rules__month-cards { display: flex; gap: 8px; flex-wrap: wrap; }
 .rules__month-cards .card { width: clamp(60px, 14vw, 90px); }
+
+/* 手機：狀態列窄版壓縮（縮字級與間距；必須排在基礎樣式之後才蓋得過去） */
+@media (max-width: 767px) {
+  .status { font-size: 12px; gap: 4px; padding: 6px 6px; }
+  .status__round { letter-spacing: 0; }
+  .status__right { gap: 4px; }
+  .status .btn--small { min-height: 30px; padding: 4px 7px; font-size: 12px; }
+  .chip { font-size: 10px; padding: 1px 5px; margin: 0 1px; }
+}
+
+/* 極窄螢幕：隱藏 AI 等級括號（選單與結算仍看得到等級） */
+@media (max-width: 519px) {
+  .status__ai-level { display: none; }
+}
 
 /* 平板以上：吃牌區移到手牌側邊 */
 @media (min-width: 768px) {

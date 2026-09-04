@@ -23,7 +23,7 @@ export const S = {
   history: '對戰紀錄',
   you: '你',
   ai: 'AI',
-  round: (n: number, total: number) => `第 ${n} / ${total} 月`,
+  round: (n: number, total: number) => `第 ${n}/${total} 月`,
   oyaMark: '親',
   deckCount: (n: number) => `山札 ${n}`,
   yourTurn: '輪到你出牌',

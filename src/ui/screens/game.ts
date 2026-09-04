@@ -329,8 +329,9 @@ export class GameScreen {
     };
     scores.appendChild(el('span', undefined, S.you));
     for (const c of sideChips(HUMAN)) scores.appendChild(c);
-    scores.appendChild(el('span', 'status__score', ` ${s.scores[HUMAN]} : ${s.scores[AI_PLAYER]} `));
-    scores.appendChild(el('span', undefined, `${S.ai}（${S.aiLevels[this.config.aiLevel]}）`));
+    scores.appendChild(el('span', 'status__score', ` ${s.scores[HUMAN]}:${s.scores[AI_PLAYER]} `));
+    scores.appendChild(el('span', undefined, S.ai));
+    scores.appendChild(el('span', 'status__ai-level', `（${S.aiLevels[this.config.aiLevel]}）`));
     for (const c of sideChips(AI_PLAYER)) scores.appendChild(c);
     status.appendChild(scores);
     const statusRight = el('span', 'status__right');
